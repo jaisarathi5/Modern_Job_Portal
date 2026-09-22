@@ -1,0 +1,47 @@
+/* Jobs Page Styles */
+.jobs-page-header {
+  padding: 2rem 0 1.8rem;
+  background: radial-gradient(circle at 50% 0%, var(--bg-subtle) 0%, var(--bg-card) 100%);
+  border-bottom: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+}
+
+.jobs-page-header h1 {
+  color: var(--primary-navy);
+}
+
+.jobs-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.jobs-count-badge {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.jobs-count-badge strong {
+  color: var(--primary-wine);
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+.mobile-filter-toggle {
+  display: none;
+  width: 100%;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 992px) {
+  .jobs-grid {
+    grid-template-columns: 1fr;
+  }
+}

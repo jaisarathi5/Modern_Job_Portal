@@ -1,0 +1,294 @@
+/* ==========================================================================
+   Right Filter Panel - JobNest reference style
+   ========================================================================== */
+.filter-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  padding: 1.3rem 1.25rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.05rem;
+  overflow: hidden;
+}
+
+.filter-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 0.15rem;
+}
+
+.filter-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--primary-navy);
+}
+
+.filter-panel-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.filter-reset-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  border: none;
+  color: var(--primary-blue);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+}
+
+.filter-reset-btn:hover {
+  background: var(--bg-subtle);
+}
+
+.filter-close-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* Fresher focus card */
+.filter-fresher-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.8rem 0.9rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-subtle);
+  transition: all var(--transition-fast);
+}
+
+.filter-fresher-card.active {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+.filter-fresher-card strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  margin-bottom: 0.1rem;
+}
+
+.filter-fresher-card.active strong {
+  color: var(--success-dark);
+}
+
+.filter-fresher-card span {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.filter-fresher-card input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--success);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Groups */
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.filter-label svg {
+  color: var(--primary-blue);
+  font-size: 0.95rem;
+}
+
+.filter-select {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 0.75rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  width: 100%;
+  cursor: pointer;
+}
+
+.filter-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-chip {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-medium);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip:hover {
+  border-color: var(--primary-blue);
+  color: var(--primary-blue);
+}
+
+.filter-chip.active {
+  background: var(--primary-charcoal);
+  border-color: var(--primary-charcoal);
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+}
+
+[data-theme="dark"] .filter-chip.active,
+.dark .filter-chip.active {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 130%);
+  border-color: #2563eb;
+}
+
+/* Location input */
+.filter-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.filter-input-wrap input {
+  padding-left: 2.2rem;
+  padding-right: 2.1rem;
+  background: var(--bg-subtle);
+}
+
+.filter-input-icon {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+
+.filter-input-clear {
+  position: absolute;
+  right: 0.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.filter-input-clear:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+/* Apply button */
+.filter-apply-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: auto;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--primary-charcoal);
+  background: var(--primary-charcoal);
+  color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-apply-btn:hover {
+  background: var(--primary-charcoal-dark);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .filter-apply-btn,
+.dark .filter-apply-btn {
+  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 130%);
+  border-color: transparent;
+}
+
+/* Mobile drawer behavior */
+@media (max-width: 1199.98px) {
+  .filter-panel {
+    position: fixed;
+    top: 6.5rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: min(320px, calc(100vw - 2rem));
+    z-index: 100;
+    transform: translateX(120%);
+    transition: transform var(--transition-normal);
+    overflow-y: auto;
+  }
+
+  .filter-panel.open {
+    transform: translateX(0);
+  }
+
+  .filter-panel-head-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter-close-btn {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .filter-panel {
+    top: 5rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+  }
+}
