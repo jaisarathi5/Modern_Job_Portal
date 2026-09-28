@@ -1,16 +1,27 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { INITIAL_APPLICATIONS } from '../data/sampleUsers';
 import { calculateJobMatch } from '../utils/jobMatcher';
+import { useJobs } from './JobContext';
 
 const ApplicationContext = createContext();
 
 export function ApplicationProvider({ children }) {
+  // JobProvider wraps this provider, so job records can be updated from here.
+  const { incrementApplicants } = useJobs();
+
   // Load applications from localStorage or fallback
   const [applications, setApplications] = useState(() => {
     const saved = localStorage.getItem('sb_applications');
     if (saved) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return parsed.map(app => {
+          const initApp = INITIAL_APPLICATIONS.find(a => a.id === app.id);
+          if (initApp && initApp.assessmentScore && !app.assessmentScore) {
+            return { ...app, ...initApp };
+          }
+          return app;
+        });
       } catch (e) {
         console.error('Failed to parse saved applications', e);
       }
@@ -30,8 +41,8 @@ export function ApplicationProvider({ children }) {
     );
   };
 
-  // Student applies for a job
-  const applyForJob = (job, user, coverNote = '') => {
+  // Student applies for a job (optionally attaching verified assessment data)
+  const applyForJob = (job, user, coverNote = '', assessmentData = null) => {
     if (!job || !user) return { success: false, message: 'Invalid job or user' };
 
     if (hasApplied(job.id, user.id)) {
@@ -40,6 +51,8 @@ export function ApplicationProvider({ children }) {
 
     const matchInfo = calculateJobMatch(user.skills || [], job);
     const today = new Date().toISOString().split('T')[0];
+
+    const hasAssessment = Boolean(assessmentData && assessmentData.assessmentScore !== undefined);
 
     const newApplication = {
       id: `app-${Date.now()}`,
@@ -55,18 +68,30 @@ export function ApplicationProvider({ children }) {
       applicantSkills: user.skills || [],
       matchPercentage: matchInfo.matchPercentage,
       appliedDate: today,
-      status: 'Applied', // Applied, Shortlisted, Interview, Selected, Rejected
+      status: hasAssessment ? 'Assessment Completed' : 'Applied', // Applied, Assessment Completed, Shortlisted, Interview, Selected, Rejected
       coverNote: coverNote.trim() || 'Excited to apply for this role and leverage my university learning.',
+      // Assessment verification payload
+      assessmentScore: hasAssessment ? assessmentData.assessmentScore : null,
+      roleReadiness: hasAssessment ? assessmentData.roleReadiness : null,
+      categoryScores: hasAssessment ? assessmentData.categoryScores : null,
+      skillPerformance: hasAssessment ? assessmentData.skillPerformance : null,
+      strongSkills: hasAssessment ? assessmentData.strongSkills : [],
+      missingSkills: hasAssessment ? assessmentData.missingSkills : [],
+      assessmentCompletedDate: hasAssessment ? today : null,
       timeline: [
         {
           status: 'Applied',
           date: today,
-          note: 'Application submitted successfully through SkillBridge portal'
+          note: hasAssessment
+            ? `Application submitted with verified assessment: ${assessmentData.assessmentScore}% Assessment Score & ${assessmentData.roleReadiness}% Role Readiness`
+            : 'Application submitted successfully through SkillBridge portal'
         }
       ]
     };
 
     setApplications(prev => [newApplication, ...prev]);
+    // Keep the advertised applicant count in step with real submissions.
+    incrementApplicants(job.id);
     return { success: true, application: newApplication };
   };
 

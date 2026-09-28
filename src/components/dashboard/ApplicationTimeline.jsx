@@ -36,9 +36,9 @@ export default function ApplicationTimeline({ currentStatus = 'Applied', timelin
 
         {isRejected ? (
           <div style={{
-            background: '#fef2f2',
-            border: '1px solid #fecaca',
-            color: '#dc2626',
+            background: 'var(--danger-bg)',
+            border: '1px solid var(--danger-border)',
+            color: 'var(--text-danger)',
             padding: '0.6rem 1rem',
             borderRadius: '8px',
             fontSize: '0.88rem',
@@ -61,8 +61,8 @@ export default function ApplicationTimeline({ currentStatus = 'Applied', timelin
             let borderColor = 'var(--border-medium)';
 
             if (isCompleted) {
-              circleBg = isCurrent ? 'var(--primary-blue)' : '#60a5fa';
-              circleColor = '#FFFFFF';
+              circleBg = isCurrent ? 'var(--primary-blue)' : 'var(--accent-indigo)';
+              circleColor = 'var(--on-accent)';
               borderColor = circleBg;
             }
 
@@ -75,7 +75,7 @@ export default function ApplicationTimeline({ currentStatus = 'Applied', timelin
                   alignItems: 'center',
                   gap: '0.35rem',
                   zIndex: 2,
-                  backgroundColor: '#FFFFFF',
+                  backgroundColor: 'var(--bg-card)',
                   padding: '0 0.4rem'
                 }}
               >

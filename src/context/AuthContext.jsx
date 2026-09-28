@@ -3,6 +3,18 @@ import { DEFAULT_STUDENT, DEFAULT_RECRUITER } from '../data/sampleUsers';
 
 const AuthContext = createContext();
 
+// Storage keys that hold demo *data*, wiped by "Reset demo data".
+// `sb_theme` and `sb_skin` are intentionally absent: the colour scheme and
+// site theme are preferences, not data, so a reset never overrides them.
+const DEMO_DATA_KEYS = [
+  'sb_jobs',
+  'sb_jobs_ver',
+  'sb_applications',
+  'sb_saved_jobs',
+  'sb_assessments',
+  'sb_accounts'
+];
+
 export function AuthProvider({ children }) {
   // Load initial role and user from localStorage or default to guest visitor
   const [role, setRole] = useState(() => {
@@ -27,6 +39,19 @@ export function AuthProvider({ children }) {
     return saved !== null ? JSON.parse(saved) : true;
   });
 
+  const readAccounts = () => {
+    try {
+      return JSON.parse(localStorage.getItem('sb_accounts') || '[]');
+    } catch (e) {
+      console.error('Failed to parse saved accounts', e);
+      return [];
+    }
+  };
+
+  const saveAccounts = (accounts) => {
+    localStorage.setItem('sb_accounts', JSON.stringify(accounts));
+  };
+
   // Keep localStorage updated
   useEffect(() => {
     localStorage.setItem('sb_role', role);
@@ -46,10 +71,9 @@ export function AuthProvider({ children }) {
 
   // Update profile
   const updateProfile = (fields) => {
-    setCurrentUser(prev => ({
-      ...prev,
-      ...fields
-    }));
+    // Guard against writing onto a missing account (e.g. a guest reaching a
+    // profile form), which would otherwise fabricate a partial user object.
+    setCurrentUser(prev => (prev ? { ...prev, ...fields } : prev));
   };
 
   // Add skill to user profile
@@ -58,6 +82,7 @@ export function AuthProvider({ children }) {
     const trimmed = newSkill.trim();
     if (!trimmed) return;
     setCurrentUser(prev => {
+      if (!prev) return prev;
       const skills = prev.skills || [];
       if (skills.some(s => s.toLowerCase() === trimmed.toLowerCase())) {
         return prev;
@@ -68,10 +93,11 @@ export function AuthProvider({ children }) {
 
   // Remove skill from profile
   const removeSkill = (skillToRemove) => {
-    setCurrentUser(prev => ({
-      ...prev,
-      skills: (prev.skills || []).filter(s => s.toLowerCase() !== skillToRemove.toLowerCase())
-    }));
+    setCurrentUser(prev => (
+      prev
+        ? { ...prev, skills: (prev.skills || []).filter(s => s.toLowerCase() !== skillToRemove.toLowerCase()) }
+        : prev
+    ));
   };
 
   // Quick switch between demo personas
@@ -90,32 +116,40 @@ export function AuthProvider({ children }) {
     setIsFresherMode(prev => !prev);
   };
 
-  // Simulated Login
+  // Authenticate against accounts created in this browser.
   const login = (email, password, selectedRole) => {
-    const r = selectedRole || (email.includes('recruiter') ? 'recruiter' : 'jobseeker');
-    setRole(r);
-    if (r === 'recruiter') {
-      setCurrentUser({
-        ...DEFAULT_RECRUITER,
-        email: email || DEFAULT_RECRUITER.email
-      });
-    } else {
-      setCurrentUser({
-        ...DEFAULT_STUDENT,
-        email: email || DEFAULT_STUDENT.email
-      });
+    const normalizedEmail = email.trim().toLowerCase();
+    const account = readAccounts().find(user => (
+      user.email.toLowerCase() === normalizedEmail &&
+      user.password === password &&
+      user.role === selectedRole
+    ));
+
+    if (!account) {
+      return { success: false, message: 'Incorrect email, password, or account role.' };
     }
-    return true;
+
+    const { password: savedPassword, ...user } = account;
+    setRole(user.role);
+    setCurrentUser(user);
+    return { success: true, user };
   };
 
-  // Simulated Register
+  // Register and persist a browser-local account for future logins.
   const register = (userData) => {
     const userRole = userData.role || 'jobseeker';
+    const normalizedEmail = userData.email.trim().toLowerCase();
+    const accounts = readAccounts();
+
+    if (accounts.some(user => user.email.toLowerCase() === normalizedEmail)) {
+      return { success: false, message: 'An account with this email already exists.' };
+    }
+
     setRole(userRole);
     const newUser = {
       id: `user-${Date.now()}`,
       name: userData.name || 'New User',
-      email: userData.email,
+      email: normalizedEmail,
       role: userRole,
       skills: userData.skills ? userData.skills.split(',').map(s => s.trim()).filter(Boolean) : ['React', 'JavaScript', 'HTML'],
       isFresher: userData.isFresher ?? true,
@@ -128,8 +162,9 @@ export function AuthProvider({ children }) {
       company: userData.company || 'Tech Innovations Inc',
       designation: userData.designation || 'Talent Acquisition'
     };
+    saveAccounts([...accounts, { ...newUser, password: userData.password }]);
     setCurrentUser(newUser);
-    return true;
+    return { success: true, user: newUser };
   };
 
   // Simulated Logout
@@ -138,11 +173,11 @@ export function AuthProvider({ children }) {
     setCurrentUser(null);
   };
 
-  // Reset to default presentation state
+  // Reset to default presentation state. Dropping the seed-version key makes the
+  // next load re-seed jobs, and wiping sb_assessments stops a "reset" demo from
+  // still believing an assessment was already completed.
   const resetDemoData = () => {
-    localStorage.removeItem('sb_jobs');
-    localStorage.removeItem('sb_applications');
-    localStorage.removeItem('sb_saved_jobs');
+    DEMO_DATA_KEYS.forEach(key => localStorage.removeItem(key));
     localStorage.setItem('sb_role', 'jobseeker');
     localStorage.setItem('sb_current_user', JSON.stringify(DEFAULT_STUDENT));
     localStorage.setItem('sb_fresher_mode', 'true');

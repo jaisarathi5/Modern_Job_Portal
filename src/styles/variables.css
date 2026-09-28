@@ -1,231 +1,824 @@
-/* Professional Tech Job Portal - Design System & Color Tokens */
+/* ==========================================================================
+   SkillBridge — Design Tokens
+   Professional, elegant system: deep navy ink + refined indigo accent on cool
+   neutral surfaces. Light and dark themes share one token contract, so every
+   component that reads var(--token) is automatically theme-correct.
+   ========================================================================== */
 :root {
-  /* Brand Core - Navy / Charcoal Primary Theme */
-  --primary-navy: #0f172a;
-  --primary-navy-hover: #1e293b;
-  --primary-navy-light: #f8fafc;
-  --primary-charcoal: #1e293b;
-  --primary-charcoal-dark: #0f172a;
-  --primary-charcoal-light: #334155;
-  
-  --primary-blue: #0f172a;
-  --primary-blue-hover: #1e293b;
-  --primary-blue-light: #f1f5f9;
-  --primary-blue-dark: #020617;
-  
-  --accent-indigo: #2563eb;
-  --accent-indigo-hover: #1d4ed8;
-  --accent-indigo-light: #eff6ff;
-  
-  --accent-cyan: #0284c7;
-  --accent-cyan-light: #f0f9ff;
-  --accent-slate: #475569;
+  color-scheme: light;
 
-  /* Warm Accent Palette (inspired by JobNest reference) */
-  --accent-wine: #9f1239;
-  --accent-wine-hover: #881337;
-  --accent-wine-light: #ffe4e6;
-  --accent-maroon: #7f1d1d;
-  --accent-purple: #4c1d95;
-  --accent-purple-light: #ede9fe;
-  --accent-gold: #f59e0b;
-  --accent-gold-light: #fef3c7;
-  --accent-gold-dark: #b45309;
+  /* ----------------------------------------------- Brand Core (beige/grey) */
+  --primary-navy: #323232;
+  --primary-navy-hover: #202020;
+  --primary-navy-light: #DDD0C8;
+  --primary-charcoal: #323232;
+  --primary-charcoal-dark: #202020;
+  --primary-charcoal-light: #4a4a4a;
 
-  /* Warm Hero / Banner Gradient */
-  --gradient-hero: linear-gradient(135deg, #170f2b 0%, #3a1650 45%, #7a1f2e 100%);
-  --gradient-hero-soft: linear-gradient(135deg, #2e1a47 0%, #541f63 55%, #93324a 100%);
-  --gradient-brand: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 60%, #db2777 130%);
+  --primary-blue: #323232;
+  --primary-blue-hover: #202020;
+  --primary-blue-light: #DDD0C8;
+  --primary-blue-dark: #202020;
 
-  /* Layout Dimensions */
+  --accent-indigo: #323232;
+  --accent-indigo-hover: #202020;
+  --accent-indigo-light: #DDD0C8;
+
+  --accent-violet: #5a514d;
+  --accent-violet-hover: #403a37;
+  --accent-violet-light: #eee7e3;
+
+  --accent-cyan: #0e7490;
+  --accent-cyan-light: #ecfeff;
+  --accent-slate: #5b6478;
+
+  /* Secondary accents — deliberately muted so the palette stays elegant */
+  --accent-wine: #323232;
+  --accent-wine-hover: #202020;
+  --accent-wine-light: #DDD0C8;
+  --accent-maroon: #403a37;
+  --accent-purple: #5a514d;
+  --accent-purple-light: #DDD0C8;
+  --accent-gold: #b45309;
+  --accent-gold-light: #fffbeb;
+  --accent-gold-dark: #92400e;
+
+  /* Full white in both themes — for text sitting on a coloured surface */
+  --on-accent: #ffffff;
+
+  /* ------------------------------------------------------------ Gradients */
+  --gradient-hero: linear-gradient(135deg, #323232 0%, #3d3b3a 58%, #5a514d 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #323232 0%, #514944 100%);
+  --gradient-brand: linear-gradient(135deg, #323232 0%, #5a514d 100%);
+  --gradient-surface: linear-gradient(180deg, #fffdfb 0%, #f3eeeb 100%);
+
+  /* ------------------------------------------------------------- Layout */
+  --container-max: 1240px;
+  --container-wide: 1560px;
   --sidebar-width: 236px;
   --filter-panel-width: 292px;
-  --layout-gutter: 1.5rem;
-  --navbar-offset: 136px;
+  /* Gutters are fluid on purpose. A fixed 1.5rem threw away ~20px of a 360px
+     phone's width (11% of the viewport) before any content was laid out; this
+     lands at 1.5rem on desktop and tightens smoothly toward 0.875rem. */
+  --layout-gutter: clamp(0.875rem, 0.45rem + 1.6vw, 1.5rem);
+  --navbar-offset: 132px;
 
-  /* Backward Compatibility Aliases for legacy component selectors */
-  --primary-wine: #0f172a;
-  --primary-wine-hover: #1e293b;
-  --primary-wine-light: #f8fafc;
-  
-  --muted-rose: #0f172a;
-  --muted-rose-hover: #1e293b;
-  --muted-rose-light: #f1f5f9;
-  
-  --accent-rose: #2563eb;
-  --accent-rose-light: #eff6ff;
-  
-  --soft-peach: #3b82f6;
-  --soft-peach-light: #eff6ff;
-  
-  --warm-cream: #e2e8f0;
-  --warm-cream-light: #f8fafc;
-  --warm-cream-hover: #cbd5e1;
+  /* Floating drawer geometry (sidebar / filter panel below the desktop grid) */
+  --drawer-top: 5.5rem;
+  --drawer-inset: 1rem;
+  --drawer-radius: var(--radius-xl);
 
-  /* Backgrounds & Surfaces */
-  --bg-main: #f8fafc;
-  --bg-subtle: #f1f5f9;
-  --bg-card: #ffffff;
+  /* ------------------------------------------------- Device / environment */
+  /* Notches, rounded corners and the home indicator. All zero on desktop and
+     on browsers without the inset, so they are safe to add into existing
+     padding/offset math. */
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+
+  /* WCAG 2.5.8 (Target Size Minimum) wants 24px, but 44px is the figure
+     users' thumbs actually hit reliably — so coarse pointers get the larger
+     target while the visual density of the design is untouched. */
+  --touch-target: 44px;
+
+  /* Page + section rhythm — every page reads these so spacing never drifts */
+  --page-pt: 2.5rem;
+  --page-pb: 4rem;
+  --section-gap: 2.25rem;
+  --card-pad: 1.75rem;
+  --card-pad-sm: 1.25rem;
+
+  /* Spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* ------------------------- Backward compatibility aliases (legacy) ---- */
+  --primary-wine: #323232;
+  --primary-wine-hover: #202020;
+  --primary-wine-light: #eee7e3;
+
+  --muted-rose: #323232;
+  --muted-rose-hover: #202020;
+  --muted-rose-light: #eee7e3;
+
+  --accent-rose: #323232;
+  --accent-rose-light: #eee7e3;
+
+  --soft-peach: #5a514d;
+  --soft-peach-light: #eee7e3;
+
+  --warm-cream: #DDD0C8;
+  --warm-cream-light: #f3eeeb;
+  --warm-cream-hover: #cbbab0;
+
+  /* ------------------------------------------------------------- Surfaces */
+  --bg-main: #f7f3f0;
+  --bg-subtle: #DDD0C8;
+  --bg-card: #fffdfb;
   --bg-card-hover: #ffffff;
-  --bg-dark: #0f172a;
-  
-  /* Text & Content */
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
+  --bg-dark: #323232;
+  --bg-inset: #f3eeeb;
+
+  /* ------------------------------------------------------------------ Ink */
+  --text-primary: #323232;
+  --text-secondary: #5a514d;
+  --text-muted: #817873;
   --text-inverse: #ffffff;
-  
-  /* Semantic Status Colors */
-  --success: #059669;
+
+  /* ------------------------------------------------- Semantic (statuses) */
+  --success: #0f9d6e;
   --success-bg: #ecfdf5;
   --success-border: #a7f3d0;
   --success-dark: #047857;
-  
-  --warning: #d97706;
+  --text-success: #047857;
+
+  --warning: #b45309;
   --warning-bg: #fffbeb;
   --warning-border: #fde68a;
-  
+  --text-warning: #92400e;
+
   --danger: #dc2626;
   --danger-bg: #fef2f2;
   --danger-border: #fecaca;
-  
-  --info: #0284c7;
-  --info-bg: #f0f9ff;
-  --info-border: #bae6fd;
+  --text-danger: #b91c1c;
+  --error: #dc2626;   /* legacy alias consumed by forms.css */
 
-  --fresher: #4f46e5;
-  --fresher-bg: #eef2ff;
-  --fresher-border: #c7d2fe;
-  
-  /* Borders & Dividers */
-  --border-light: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-active: #2563eb;
-  
-  /* Modern SaaS Card Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(15, 23, 42, 0.08), 0 1px 2px -1px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.08);
-  --shadow-hover: 0 14px 25px -5px rgba(37, 99, 235, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
-  
-  /* Radii */
+  --info: #323232;
+  --info-bg: #DDD0C8;
+  --info-border: #cdbeb6;
+  --text-info: #403a37;
+
+  --fresher: #0f9d6e;
+  --fresher-bg: #ecfdf5;
+  --fresher-border: #a7f3d0;
+
+  /* Tones — bg / border / text triplets used by status pills and badges */
+  --tone-indigo: #323232;
+  --tone-indigo-bg: #DDD0C8;
+  --tone-indigo-border: #cdbeb6;
+  --tone-blue: #1d4ed8;
+  --tone-blue-bg: #eff6ff;
+  --tone-blue-border: #bfdbfe;
+  --tone-success: #047857;
+  --tone-success-bg: #ecfdf5;
+  --tone-success-border: #a7f3d0;
+  --tone-warning: #92400e;
+  --tone-warning-bg: #fffbeb;
+  --tone-warning-border: #fde68a;
+  --tone-danger: #b91c1c;
+  --tone-danger-bg: #fef2f2;
+  --tone-danger-border: #fecaca;
+  --tone-neutral: #5a514d;
+  --tone-neutral-bg: #DDD0C8;
+  --tone-neutral-border: #d5c8c1;
+
+  /* -------------------------------------------------------------- Borders */
+  --border-light: #e7ddd7;
+  --border-medium: #d4c5bd;
+  --border-strong: #bbaaa0;
+  --border-active: #323232;
+
+  /* -------------------------------------------------------------- Shadows */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.05);
+  --shadow-lg: 0 12px 20px -6px rgba(16, 24, 40, 0.10), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
+  --shadow-hover: 0 16px 28px -10px rgba(20, 26, 52, 0.18), 0 6px 12px -6px rgba(16, 24, 40, 0.08);
+  --shadow-brand: 0 6px 18px -6px rgba(50, 50, 50, 0.35);
+
+  /* One focus ring definition → consistent keyboard affordance everywhere */
+  --focus-ring: 0 0 0 3px rgba(50, 50, 50, 0.22);
+  --focus-ring-danger: 0 0 0 3px rgba(220, 38, 38, 0.22);
+
+  /* ---------------------------------------------------------------- Radii */
   --radius-xs: 4px;
-  --radius-sm: 6px;
+  --radius-sm: 8px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 18px;
   --radius-full: 9999px;
-  
-  /* Typography */
+
+  /* --------------------------------------------------------- Control sizes */
+  --control-h: 42px;
+  --control-h-sm: 34px;
+  --control-h-lg: 48px;
+  --control-h-nav: 36px;   /* navbar controls share one height */
+
+  /* ----------------------------------------------------------- Typography */
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  
-  /* Layout Transitions */
+
+  --fs-display: clamp(2rem, 1.35rem + 2.1vw, 3rem);
+  --fs-h1: clamp(1.8rem, 1.35rem + 1.5vw, 2.4rem);
+  --fs-h2: clamp(1.5rem, 1.2rem + 1vw, 1.95rem);
+  --fs-h3: clamp(1.2rem, 1.05rem + 0.5vw, 1.4rem);
+  --fs-lead: 1.03rem;
+
+  /* -------------------------------------------------------- Footer palette */
+  --footer-bg: #323232;
+  --footer-heading: #ffffff;
+  --footer-text: #d8c9c1;
+  --footer-link: #eee7e3;
+  --footer-muted: #bbaaa0;
+  --footer-border: rgba(255, 255, 255, 0.10);
+  --footer-chip-bg: rgba(255, 255, 255, 0.06);
+  --footer-chip-text: #c7cde0;
+
+  /* ----------------------------------------------------------- Transitions */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* ==========================================================================
-   Dark Mode Design Tokens
+   Accent families — brand-layer tokens only (buttons, links, tabs, focus
+   rings, active pills, gradients). Six accents sit on top of the same
+   light/dark surfaces: Charcoal (the current default) plus Midnight Blue,
+   Emerald, Crimson, Royal Purple and Amber Gold.
+   --------------------------------------------------------------------------
+   Rule of thumb for this file: theme blocks own surfaces/ink; accent blocks
+   below own brand chrome. :root keeps the charcoal values so first paint —
+   and any unknown stored accent — never blanks the brand layer.
+   ========================================================================== */
+
+/* Charcoal (default) — the neutral, professional look */
+:root {
+  --accent-base: #323232;
+  --accent-hover: #202020;
+  --accent-soft: #DDD0C8;
+  --accent-soft-border: #cdbeb6;
+  --accent-gradient: linear-gradient(135deg, #323232 0%, #5a514d 100%);
+  --accent-ring: 0 0 0 3px rgba(50, 50, 50, 0.22);
+  --accent-shadow: 0 6px 18px -6px rgba(50, 50, 50, 0.35);
+}
+
+[data-accent='midnight'] {
+  --accent-base: #2456c6;
+  --accent-hover: #1e40af;
+  --accent-soft: #dbe7ff;
+  --accent-soft-border: #b9cdf3;
+  --accent-gradient: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  --accent-ring: 0 0 0 3px rgba(36, 86, 198, 0.28);
+  --accent-shadow: 0 6px 18px -6px rgba(36, 86, 198, 0.5);
+}
+
+[data-accent='emerald'] {
+  --accent-base: #047857;
+  --accent-hover: #065f46;
+  --accent-soft: #d3efe3;
+  --accent-soft-border: #a9dcc2;
+  --accent-gradient: linear-gradient(135deg, #047857 0%, #10b981 100%);
+  --accent-ring: 0 0 0 3px rgba(4, 120, 87, 0.25);
+  --accent-shadow: 0 6px 18px -6px rgba(4, 120, 87, 0.5);
+}
+
+[data-accent='crimson'] {
+  --accent-base: #c42828;
+  --accent-hover: #a11f1f;
+  --accent-soft: #f6dcd6;
+  --accent-soft-border: #e4aea3;
+  --accent-gradient: linear-gradient(135deg, #b91c1c 0%, #ef4444 100%);
+  --accent-ring: 0 0 0 3px rgba(196, 40, 40, 0.25);
+  --accent-shadow: 0 6px 18px -6px rgba(196, 40, 40, 0.5);
+}
+
+[data-accent='royal'] {
+  --accent-base: #6d28d9;
+  --accent-hover: #5b21b6;
+  --accent-soft: #e3d8fc;
+  --accent-soft-border: #c0abef;
+  --accent-gradient: linear-gradient(135deg, #6d28d9 0%, #a855f7 100%);
+  --accent-ring: 0 0 0 3px rgba(109, 40, 217, 0.28);
+  --accent-shadow: 0 6px 18px -6px rgba(109, 40, 217, 0.5);
+}
+
+[data-accent='amber'] {
+  --accent-base: #b45309;
+  --accent-hover: #92400e;
+  --accent-soft: #f7e3c2;
+  --accent-soft-border: #e2c189;
+  --accent-gradient: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+  --accent-ring: 0 0 0 3px rgba(180, 83, 9, 0.28);
+  --accent-shadow: 0 6px 18px -6px rgba(180, 83, 9, 0.5);
+}
+
+/* Every accent repoints the same brand aliases, so components never need to
+   know which palette is active. `:root` keeps the charcoal values as the
+   no-JS / first-paint default; `[data-accent]` always wins over plain
+   light-mode values. */
+:root,
+[data-accent='charcoal'] {
+  --primary-blue: var(--accent-base);
+  --primary-blue-hover: var(--accent-hover);
+  --primary-blue-light: var(--accent-soft);
+  --primary-blue-dark: var(--accent-hover);
+  --primary-navy: var(--accent-base);
+  --primary-navy-hover: var(--accent-hover);
+  --primary-navy-light: var(--accent-soft);
+  --primary-charcoal: var(--accent-base);
+  --primary-charcoal-dark: var(--accent-hover);
+  --primary-charcoal-light: var(--accent-hover);
+  --primary-wine: var(--accent-base);
+  --primary-wine-hover: var(--accent-hover);
+  --primary-wine-light: var(--accent-soft);
+  --muted-rose: var(--accent-base);
+  --muted-rose-hover: var(--accent-hover);
+  --muted-rose-light: var(--accent-soft);
+  --accent-rose: var(--accent-base);
+  --accent-rose-light: var(--accent-soft);
+  --accent-indigo: var(--accent-base);
+  --accent-indigo-hover: var(--accent-hover);
+  --accent-indigo-light: var(--accent-soft);
+  --accent-wine: var(--accent-base);
+  --accent-wine-hover: var(--accent-hover);
+  --accent-wine-light: var(--accent-soft);
+  --accent-maroon: var(--accent-hover);
+  --accent-purple: var(--accent-base);
+  --accent-purple-light: var(--accent-soft);
+  --accent-violet: var(--accent-base);
+  --accent-violet-hover: var(--accent-hover);
+  --accent-violet-light: var(--accent-soft);
+  --info: var(--accent-base);
+  --info-bg: var(--accent-soft);
+  --info-border: var(--accent-soft-border);
+  --text-info: var(--accent-hover);
+  --tone-indigo: var(--accent-base);
+  --tone-indigo-bg: var(--accent-soft);
+  --tone-indigo-border: var(--accent-soft-border);
+  --border-active: var(--accent-base);
+  --gradient-brand: var(--accent-gradient);
+  --gradient-hero: var(--accent-gradient);
+  --gradient-hero-soft: var(--accent-gradient);
+  --shadow-brand: var(--accent-shadow);
+  --focus-ring: var(--accent-ring);
+}
+
+[data-accent='midnight'],
+[data-accent='emerald'],
+[data-accent='crimson'],
+[data-accent='royal'],
+[data-accent='amber'] {
+  --primary-blue: var(--accent-base);
+  --primary-blue-hover: var(--accent-hover);
+  --primary-blue-light: var(--accent-soft);
+  --primary-blue-dark: var(--accent-hover);
+  --primary-navy: var(--accent-base);
+  --primary-navy-hover: var(--accent-hover);
+  --primary-navy-light: var(--accent-soft);
+  --primary-charcoal: var(--accent-base);
+  --primary-charcoal-dark: var(--accent-hover);
+  --primary-charcoal-light: var(--accent-hover);
+  --primary-wine: var(--accent-base);
+  --primary-wine-hover: var(--accent-hover);
+  --primary-wine-light: var(--accent-soft);
+  --muted-rose: var(--accent-base);
+  --muted-rose-hover: var(--accent-hover);
+  --muted-rose-light: var(--accent-soft);
+  --accent-rose: var(--accent-base);
+  --accent-rose-light: var(--accent-soft);
+  --accent-indigo: var(--accent-base);
+  --accent-indigo-hover: var(--accent-hover);
+  --accent-indigo-light: var(--accent-soft);
+  --accent-wine: var(--accent-base);
+  --accent-wine-hover: var(--accent-hover);
+  --accent-wine-light: var(--accent-soft);
+  --accent-maroon: var(--accent-hover);
+  --accent-purple: var(--accent-base);
+  --accent-purple-light: var(--accent-soft);
+  --accent-violet: var(--accent-base);
+  --accent-violet-hover: var(--accent-hover);
+  --accent-violet-light: var(--accent-soft);
+  --info: var(--accent-base);
+  --info-bg: var(--accent-soft);
+  --info-border: var(--accent-soft-border);
+  --text-info: var(--accent-hover);
+  --tone-indigo: var(--accent-base);
+  --tone-indigo-bg: var(--accent-soft);
+  --tone-indigo-border: var(--accent-soft-border);
+  --border-active: var(--accent-base);
+  --gradient-brand: var(--accent-gradient);
+  --gradient-hero: var(--accent-gradient);
+  --gradient-hero-soft: var(--accent-gradient);
+  --shadow-brand: var(--accent-shadow);
+  --focus-ring: var(--accent-ring);
+}
+/* ==========================================================================
+   Dark Theme — same token contract, deeper navy surfaces, indigo accents
    ========================================================================== */
 [data-theme="dark"],
 .dark {
-  /* Brand Core in Dark Mode */
-  --primary-navy: #f8fafc;
-  --primary-navy-hover: #e2e8f0;
-  --primary-navy-light: #1e293b;
-  --primary-charcoal: #334155;
-  --primary-charcoal-dark: #0f172a;
-  --primary-charcoal-light: #475569;
-  
-  --primary-blue: #38bdf8;
-  --primary-blue-hover: #0284c7;
-  --primary-blue-light: #0f233f;
-  --primary-blue-dark: #0284c7;
-  
-  --accent-indigo: #60a5fa;
-  --accent-indigo-hover: #3b82f6;
-  --accent-indigo-light: #1e293b;
-  
-  --accent-cyan: #38bdf8;
-  --accent-cyan-light: #0c2b48;
-  --accent-slate: #94a3b8;
+  color-scheme: dark;
 
-  /* Warm Accent Palette in Dark Mode */
-  --accent-wine: #fb7185;
-  --accent-wine-hover: #fda4af;
-  --accent-wine-light: #3f1220;
-  --accent-maroon: #f87171;
-  --accent-purple: #a78bfa;
-  --accent-purple-light: #241a45;
+  /* Brand Core in Dark Mode */
+  --primary-navy: #DDD0C8;
+  --primary-navy-hover: #f0e7e1;
+  --primary-navy-light: #4a4a4a;
+  --primary-charcoal: #323232;
+  --primary-charcoal-dark: #202020;
+  --primary-charcoal-light: #4a4a4a;
+
+  --primary-blue: #DDD0C8;
+  --primary-blue-hover: #f0e7e1;
+  --primary-blue-light: #4a4a4a;
+  --primary-blue-dark: #f0e7e1;
+
+  --accent-indigo: #818cf8;
+  --accent-indigo-hover: #a5b4fc;
+  --accent-indigo-light: #1e2454;
+
+  --accent-violet: #a5a0f0;
+  --accent-violet-hover: #c4c1f8;
+  --accent-violet-light: #232450;
+
+  --accent-cyan: #67c9d8;
+  --accent-cyan-light: #14303a;
+  --accent-slate: #9aa3c4;
+
+  /* Secondary accents in Dark Mode */
+  --accent-wine: #a5b4fc;
+  --accent-wine-hover: #c7d2fe;
+  --accent-wine-light: #232450;
+  --accent-maroon: #818cf8;
+  --accent-purple: #a5a0f0;
+  --accent-purple-light: #232450;
   --accent-gold: #fbbf24;
-  --accent-gold-light: #3b2a07;
+  --accent-gold-light: #33260b;
   --accent-gold-dark: #fcd34d;
 
+  --on-accent: #ffffff;
+
+  /* --------------------------------------------------- Gradients (dark) */
+  --gradient-hero: linear-gradient(135deg, #202020 0%, #323232 58%, #4a4a4a 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #323232 0%, #4a4a4a 100%);
+  --gradient-brand: linear-gradient(135deg, #323232 0%, #5a514d 100%);
+  --gradient-surface: linear-gradient(180deg, #3a3a3a 0%, #252525 100%);
+
   /* Backward Compatibility Aliases for Dark Mode */
-  --primary-wine: #f8fafc;
-  --primary-wine-hover: #e2e8f0;
-  --primary-wine-light: #1e293b;
-  
-  --muted-rose: #38bdf8;
-  --muted-rose-hover: #0284c7;
-  --muted-rose-light: #0f233f;
-  
-  --accent-rose: #38bdf8;
-  --accent-rose-light: #1e293b;
-  
-  --soft-peach: #60a5fa;
-  --soft-peach-light: #1e293b;
-  
-  --warm-cream: #334155;
-  --warm-cream-light: #1e293b;
-  --warm-cream-hover: #475569;
+  --primary-wine: #eaeefc;
+  --primary-wine-hover: #c7d2fe;
+  --primary-wine-light: #1b2145;
 
-  /* Backgrounds & Surfaces */
-  --bg-main: #0b0f19;
-  --bg-subtle: #111827;
-  --bg-card: #151e32;
-  --bg-card-hover: #1b2640;
-  --bg-dark: #060911;
-  
-  /* Text & Content */
-  --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
-  --text-inverse: #0f172a;
-  
-  /* Semantic Status Colors */
-  --success: #10b981;
-  --success-bg: #064e3b;
-  --success-border: #047857;
-  --success-dark: #34d399;
-  
-  --warning: #f59e0b;
-  --warning-bg: #451a03;
-  --warning-border: #78350f;
-  
-  --danger: #ef4444;
-  --danger-bg: #450a0a;
-  --danger-border: #7f1d1d;
-  
-  --info: #38bdf8;
-  --info-bg: #082f49;
-  --info-border: #0369a1;
+  --muted-rose: #a5b4fc;
+  --muted-rose-hover: #c7d2fe;
+  --muted-rose-light: #1e2454;
 
-  --fresher: #818cf8;
-  --fresher-bg: #1e1b4b;
-  --fresher-border: #3730a3;
-  
-  /* Borders & Dividers */
-  --border-light: #1e293b;
-  --border-medium: #334155;
-  --border-active: #38bdf8;
-  
-  /* Modern SaaS Card Shadows */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6);
-  --shadow-hover: 0 14px 25px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --accent-rose: #a5b4fc;
+  --accent-rose-light: #1e2454;
+
+  --soft-peach: #a5b4fc;
+  --soft-peach-light: #1e2454;
+
+  --warm-cream: #232850;
+  --warm-cream-light: #1b2145;
+  --warm-cream-hover: #2b3160;
+
+  /* -------------------------------------------------------- Surfaces */
+  --bg-main: #202020;
+  --bg-subtle: #323232;
+  --bg-card: #3a3a3a;
+  --bg-card-hover: #4a4a4a;
+  --bg-dark: #171717;
+  --bg-inset: #292929;
+
+  /* --------------------------------------------------------------- Ink */
+  --text-primary: #f5eee9;
+  --text-secondary: #d8c9c1;
+  --text-muted: #bbaaa0;
+  --text-inverse: #202020;
+
+  /* ------------------------------------------------- Semantic (statuses) */
+  --success: #34d399;
+  --success-bg: #0c3b2e;
+  --success-border: #17594a;
+  --success-dark: #6ee7b7;
+  --text-success: #6ee7b7;
+
+  --warning: #fbbf24;
+  --warning-bg: #3d2a08;
+  --warning-border: #6b4a0c;
+  --text-warning: #fcd34d;
+
+  --danger: #f87171;
+  --danger-bg: #3d1414;
+  --danger-border: #6b2020;
+  --text-danger: #fca5a5;
+  --error: #f87171;
+
+  --info: #a5b4fc;
+  --info-bg: #1e2454;
+  --info-border: #37408c;
+  --text-info: #a5b4fc;
+
+  --fresher: #34d399;
+  --fresher-bg: #0c3b2e;
+  --fresher-border: #17594a;
+
+  /* Dark-mode tone triplets */
+  --tone-indigo: #a5b4fc;
+  --tone-indigo-bg: #1e2454;
+  --tone-indigo-border: #37408c;
+  --tone-blue: #93c5fd;
+  --tone-blue-bg: #14294a;
+  --tone-blue-border: #1f4478;
+  --tone-success: #6ee7b7;
+  --tone-success-bg: #0c3b2e;
+  --tone-success-border: #17594a;
+  --tone-warning: #fcd34d;
+  --tone-warning-bg: #3d2a08;
+  --tone-warning-border: #6b4a0c;
+  --tone-danger: #fca5a5;
+  --tone-danger-bg: #3d1414;
+  --tone-danger-border: #6b2020;
+  --tone-neutral: #b8bfdc;
+  --tone-neutral-bg: #1d2346;
+  --tone-neutral-border: #333a66;
+
+  /* ------------------------------------------------------------ Borders */
+  --border-light: #262d52;
+  --border-medium: #333c6b;
+  --border-strong: #3f4a80;
+  --border-active: #818cf8;
+
+  /* ------------------------------------------------------------ Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.55), 0 2px 4px -2px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 22px -6px rgba(0, 0, 0, 0.65), 0 4px 8px -4px rgba(0, 0, 0, 0.5);
+  --shadow-hover: 0 16px 30px -10px rgba(0, 0, 0, 0.7), 0 8px 14px -8px rgba(0, 0, 0, 0.55);
+  --shadow-brand: 0 6px 18px -6px rgba(99, 102, 241, 0.45);
+
+  --focus-ring: 0 0 0 3px rgba(129, 140, 248, 0.32);
+  --focus-ring-danger: 0 0 0 3px rgba(248, 113, 113, 0.3);
+
+  /* ------------------------------------------------------ Footer palette */
+  --footer-bg: #070a1a;
+  --footer-heading: #edf0fb;
+  --footer-text: #aab2d0;
+  --footer-link: #c3cae4;
+  --footer-muted: #7f88a8;
+  --footer-border: rgba(255, 255, 255, 0.08);
+  --footer-chip-bg: rgba(255, 255, 255, 0.06);
+  --footer-chip-text: #c3cae4;
+}
+
+/* Brand chrome follows the active accent even on deep surfaces. These
+   combined selectors beat the flat dark-theme aliases above without
+   touching surfaces, ink or status colours. Filled brand surfaces become
+   light tints here, so `--on-accent` flips to deep ink for readable button
+   text (white on a light tint would fail contrast). */
+[data-theme="dark"][data-accent='midnight'],
+.dark[data-accent='midnight'] {
+  --on-accent: #0b1220;
+  --accent-base: #7ea4f2;
+  --accent-hover: #a9c4f7;
+  --accent-soft: #233257;
+  --accent-soft-border: #32467c;
+  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%);
+  --accent-ring: 0 0 0 3px rgba(126, 164, 242, 0.35);
+  --accent-shadow: 0 6px 18px -6px rgba(59, 130, 246, 0.55);
+  --primary-blue: #a9c4f7;
+  --primary-blue-hover: #c3d5fa;
+  --primary-blue-light: #233257;
+  --primary-navy: #c9d8f8;
+  --primary-navy-hover: #e4ecfc;
+  --primary-navy-light: #233257;
+  --primary-wine: #a9c4f7;
+  --primary-wine-hover: #c3d5fa;
+  --primary-wine-light: #233257;
+  --muted-rose: #a9c4f7;
+  --muted-rose-hover: #c3d5fa;
+  --muted-rose-light: #233257;
+  --accent-rose: #a9c4f7;
+  --accent-rose-light: #233257;
+  --accent-indigo: #a9c4f7;
+  --accent-indigo-hover: #c3d5fa;
+  --accent-indigo-light: #233257;
+  --accent-wine: #a9c4f7;
+  --accent-wine-hover: #c3d5fa;
+  --accent-wine-light: #233257;
+  --accent-maroon: #7ea4f2;
+  --accent-purple: #a9c4f7;
+  --accent-purple-light: #233257;
+  --accent-violet: #a9c4f7;
+  --accent-violet-hover: #c3d5fa;
+  --accent-violet-light: #233257;
+  --info: #a9c4f7;
+  --info-bg: #233257;
+  --info-border: #32467c;
+  --text-info: #c3d5fa;
+  --tone-indigo: #a9c4f7;
+  --tone-indigo-bg: #233257;
+  --tone-indigo-border: #32467c;
+  --border-active: #7ea4f2;
+  --gradient-brand: linear-gradient(135deg, #3b82f6 0%, #93c5fd 100%);
+  --gradient-hero: linear-gradient(135deg, #274b93 0%, #3b82f6 58%, #7ea4f2 100%);
+  --shadow-brand: 0 6px 18px -6px rgba(59, 130, 246, 0.55);
+  --focus-ring: 0 0 0 3px rgba(126, 164, 242, 0.35);
+}
+
+[data-theme="dark"][data-accent='emerald'],
+.dark[data-accent='emerald'] {
+  --on-accent: #0b1220;
+  --accent-base: #3fc493;
+  --accent-hover: #7bdcae;
+  --accent-soft: #163d2f;
+  --accent-soft-border: #245c46;
+  --accent-gradient: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+  --accent-ring: 0 0 0 3px rgba(63, 196, 147, 0.35);
+  --accent-shadow: 0 6px 18px -6px rgba(16, 185, 129, 0.55);
+  --primary-blue: #7bdcae;
+  --primary-blue-hover: #a5eac8;
+  --primary-blue-light: #163d2f;
+  --primary-navy: #b9e9d2;
+  --primary-navy-hover: #dcf5e8;
+  --primary-navy-light: #163d2f;
+  --primary-wine: #7bdcae;
+  --primary-wine-hover: #a5eac8;
+  --primary-wine-light: #163d2f;
+  --muted-rose: #7bdcae;
+  --muted-rose-hover: #a5eac8;
+  --muted-rose-light: #163d2f;
+  --accent-rose: #7bdcae;
+  --accent-rose-light: #163d2f;
+  --accent-indigo: #7bdcae;
+  --accent-indigo-hover: #a5eac8;
+  --accent-indigo-light: #163d2f;
+  --accent-wine: #7bdcae;
+  --accent-wine-hover: #a5eac8;
+  --accent-wine-light: #163d2f;
+  --accent-maroon: #3fc493;
+  --accent-purple: #7bdcae;
+  --accent-purple-light: #163d2f;
+  --accent-violet: #7bdcae;
+  --accent-violet-hover: #a5eac8;
+  --accent-violet-light: #163d2f;
+  --info: #7bdcae;
+  --info-bg: #163d2f;
+  --info-border: #245c46;
+  --text-info: #a5eac8;
+  --tone-indigo: #7bdcae;
+  --tone-indigo-bg: #163d2f;
+  --tone-indigo-border: #245c46;
+  --border-active: #3fc493;
+  --gradient-brand: linear-gradient(135deg, #10b981 0%, #6ee7b7 100%);
+  --gradient-hero: linear-gradient(135deg, #0b5e46 0%, #10b981 58%, #3fc493 100%);
+  --shadow-brand: 0 6px 18px -6px rgba(16, 185, 129, 0.55);
+  --focus-ring: 0 0 0 3px rgba(63, 196, 147, 0.35);
+}
+
+[data-theme="dark"][data-accent='crimson'],
+.dark[data-accent='crimson'] {
+  --on-accent: #0b1220;
+  --accent-base: #e5746d;
+  --accent-hover: #f0a39d;
+  --accent-soft: #46201d;
+  --accent-soft-border: #6c3530;
+  --accent-gradient: linear-gradient(135deg, #ef4444 0%, #f59e9e 100%);
+  --accent-ring: 0 0 0 3px rgba(229, 116, 109, 0.35);
+  --accent-shadow: 0 6px 18px -6px rgba(239, 68, 68, 0.55);
+  --primary-blue: #f0a39d;
+  --primary-blue-hover: #f6c4c0;
+  --primary-blue-light: #46201d;
+  --primary-navy: #f3cfcb;
+  --primary-navy-hover: #f9e3e0;
+  --primary-navy-light: #46201d;
+  --primary-wine: #f0a39d;
+  --primary-wine-hover: #f6c4c0;
+  --primary-wine-light: #46201d;
+  --muted-rose: #f0a39d;
+  --muted-rose-hover: #f6c4c0;
+  --muted-rose-light: #46201d;
+  --accent-rose: #f0a39d;
+  --accent-rose-light: #46201d;
+  --accent-indigo: #f0a39d;
+  --accent-indigo-hover: #f6c4c0;
+  --accent-indigo-light: #46201d;
+  --accent-wine: #f0a39d;
+  --accent-wine-hover: #f6c4c0;
+  --accent-wine-light: #46201d;
+  --accent-maroon: #e5746d;
+  --accent-purple: #f0a39d;
+  --accent-purple-light: #46201d;
+  --accent-violet: #f0a39d;
+  --accent-violet-hover: #f6c4c0;
+  --accent-violet-light: #46201d;
+  --info: #f0a39d;
+  --info-bg: #46201d;
+  --info-border: #6c3530;
+  --text-info: #f6c4c0;
+  --tone-indigo: #f0a39d;
+  --tone-indigo-bg: #46201d;
+  --tone-indigo-border: #6c3530;
+  --border-active: #e5746d;
+  --gradient-brand: linear-gradient(135deg, #ef4444 0%, #f59e9e 100%);
+  --gradient-hero: linear-gradient(135deg, #7f2b26 0%, #ef4444 58%, #e5746d 100%);
+  --shadow-brand: 0 6px 18px -6px rgba(239, 68, 68, 0.55);
+  --focus-ring: 0 0 0 3px rgba(229, 116, 109, 0.35);
+}
+
+[data-theme="dark"][data-accent='royal'],
+.dark[data-accent='royal'] {
+  --on-accent: #0b1220;
+  --accent-base: #a684f0;
+  --accent-hover: #c2a9f5;
+  --accent-soft: #2a2148;
+  --accent-soft-border: #443671;
+  --accent-gradient: linear-gradient(135deg, #a855f7 0%, #d8b4fe 100%);
+  --accent-ring: 0 0 0 3px rgba(166, 132, 240, 0.35);
+  --accent-shadow: 0 6px 18px -6px rgba(168, 85, 247, 0.55);
+  --primary-blue: #c2a9f5;
+  --primary-blue-hover: #d6c2f8;
+  --primary-blue-light: #2a2148;
+  --primary-navy: #d3c4f7;
+  --primary-navy-hover: #e4d7fa;
+  --primary-navy-light: #2a2148;
+  --primary-wine: #c2a9f5;
+  --primary-wine-hover: #d6c2f8;
+  --primary-wine-light: #2a2148;
+  --muted-rose: #c2a9f5;
+  --muted-rose-hover: #d6c2f8;
+  --muted-rose-light: #2a2148;
+  --accent-rose: #c2a9f5;
+  --accent-rose-light: #2a2148;
+  --accent-indigo: #c2a9f5;
+  --accent-indigo-hover: #d6c2f8;
+  --accent-indigo-light: #2a2148;
+  --accent-wine: #c2a9f5;
+  --accent-wine-hover: #d6c2f8;
+  --accent-wine-light: #2a2148;
+  --accent-maroon: #a684f0;
+  --accent-purple: #c2a9f5;
+  --accent-purple-light: #2a2148;
+  --accent-violet: #c2a9f5;
+  --accent-violet-hover: #d6c2f8;
+  --accent-violet-light: #2a2148;
+  --info: #c2a9f5;
+  --info-bg: #2a2148;
+  --info-border: #443671;
+  --text-info: #d6c2f8;
+  --tone-indigo: #c2a9f5;
+  --tone-indigo-bg: #2a2148;
+  --tone-indigo-border: #443671;
+  --border-active: #a684f0;
+  --gradient-brand: linear-gradient(135deg, #a855f7 0%, #d8b4fe 100%);
+  --gradient-hero: linear-gradient(135deg, #4c1d95 0%, #a855f7 58%, #a684f0 100%);
+  --shadow-brand: 0 6px 18px -6px rgba(168, 85, 247, 0.55);
+  --focus-ring: 0 0 0 3px rgba(166, 132, 240, 0.35);
+}
+
+[data-theme="dark"][data-accent='amber'],
+.dark[data-accent='amber'] {
+  --on-accent: #0b1220;
+  --accent-base: #e2a44a;
+  --accent-hover: #f0bd72;
+  --accent-soft: #40300f;
+  --accent-soft-border: #6b4d1c;
+  --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  --accent-ring: 0 0 0 3px rgba(226, 164, 74, 0.35);
+  --accent-shadow: 0 6px 18px -6px rgba(245, 158, 11, 0.55);
+  --primary-blue: #f0bd72;
+  --primary-blue-hover: #f4cf96;
+  --primary-blue-light: #40300f;
+  --primary-navy: #f2d5a4;
+  --primary-navy-hover: #f8e4c3;
+  --primary-navy-light: #40300f;
+  --primary-wine: #f0bd72;
+  --primary-wine-hover: #f4cf96;
+  --primary-wine-light: #40300f;
+  --muted-rose: #f0bd72;
+  --muted-rose-hover: #f4cf96;
+  --muted-rose-light: #40300f;
+  --accent-rose: #f0bd72;
+  --accent-rose-light: #40300f;
+  --accent-indigo: #f0bd72;
+  --accent-indigo-hover: #f4cf96;
+  --accent-indigo-light: #40300f;
+  --accent-wine: #f0bd72;
+  --accent-wine-hover: #f4cf96;
+  --accent-wine-light: #40300f;
+  --accent-maroon: #e2a44a;
+  --accent-purple: #f0bd72;
+  --accent-purple-light: #40300f;
+  --accent-violet: #f0bd72;
+  --accent-violet-hover: #f4cf96;
+  --accent-violet-light: #40300f;
+  --info: #f0bd72;
+  --info-bg: #40300f;
+  --info-border: #6b4d1c;
+  --text-info: #f4cf96;
+  --tone-indigo: #f0bd72;
+  --tone-indigo-bg: #40300f;
+  --tone-indigo-border: #6b4d1c;
+  --border-active: #e2a44a;
+  --gradient-brand: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  --gradient-hero: linear-gradient(135deg, #78350f 0%, #f59e0b 58%, #e2a44a 100%);
+  --shadow-brand: 0 6px 18px -6px rgba(245, 158, 11, 0.55);
+  --focus-ring: 0 0 0 3px rgba(226, 164, 74, 0.35);
 }

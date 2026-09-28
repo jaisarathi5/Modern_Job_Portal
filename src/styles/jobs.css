@@ -1,9 +1,45 @@
 /* Jobs Page Styles */
 .jobs-page-header {
-  padding: 2rem 0 1.8rem;
-  background: radial-gradient(circle at 50% 0%, var(--bg-subtle) 0%, var(--bg-card) 100%);
+  padding: var(--space-8) 0 var(--space-6);
+  background: var(--gradient-surface);
   border-bottom: 1px solid var(--border-light);
   border-radius: var(--radius-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+.jobs-page-header::before,
+.jobs-page-header::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(48px);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.jobs-page-header::before {
+  width: 260px;
+  height: 260px;
+  background: var(--primary-blue-light);
+  top: -120px;
+  right: 8%;
+  animation: blobDrift 14s ease-in-out infinite;
+}
+
+.jobs-page-header::after {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-violet-light, var(--primary-blue-light));
+  bottom: -110px;
+  left: 4%;
+  animation: blobDrift 18s ease-in-out infinite reverse;
+}
+
+.jobs-page-header > .container {
+  position: relative;
+  z-index: 1;
 }
 
 .jobs-page-header h1 {
@@ -15,23 +51,53 @@
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .jobs-count-badge {
   font-size: 0.95rem;
   color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .jobs-count-badge strong {
-  color: var(--primary-wine);
+  color: var(--primary-navy);
 }
 
+/* The `min(340px, 100%)` cap is essential: a bare 340px minimum overflows a
+   360px phone once the container padding is subtracted, which is what forced a
+   horizontal scrollbar across the whole listings page. */
 .jobs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr));
+  gap: var(--space-5);
+}
+
+.jobs-grid > * {
+  animation: cardRiseIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms);
+}
+
+@keyframes cardRiseIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes blobDrift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(18px, -14px) scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jobs-grid > *,
+  .jobs-page-header::before,
+  .jobs-page-header::after {
+    animation: none !important;
+  }
 }
 
 .mobile-filter-toggle {

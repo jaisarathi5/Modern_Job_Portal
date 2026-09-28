@@ -1,24 +1,44 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { INITIAL_JOBS } from '../data/initialJobs';
+import { ALL_SEED_JOBS } from '../data/allJobs';
+import { getBranchForCategory } from '../data/engineeringBranches';
 import { useAuth } from './AuthContext';
 import { calculateJobMatch } from '../utils/jobMatcher';
+import { parsePostedDaysAgo } from '../utils/jobRecency';
+import { estimateSalaryLPA } from '../utils/salaryParser';
+import { getSortOptions } from '../data/jobSortOptions';
 
 const JobContext = createContext();
 
 export function JobProvider({ children }) {
   const { currentUser, isFresherMode } = useAuth();
 
-  // Load jobs from localStorage or fallback to INITIAL_JOBS
+  // Load jobs from localStorage or fallback to multi-branch seed.
+  // Branch is backfilled from category so legacy saved jobs also adapt.
+  // Stored version key lets us refresh seed when new branches are added.
+  const SEED_VERSION = 3;
+  const withBranch = (j) => ({
+    ...j,
+    branch: j.branch || getBranchForCategory(j.category)?.id || 'general',
+  });
   const [jobs, setJobs] = useState(() => {
     const saved = localStorage.getItem('sb_jobs');
-    if (saved) {
+    const savedVer = Number(localStorage.getItem('sb_jobs_ver') || 0);
+    if (saved && savedVer >= SEED_VERSION) {
       try {
-        return JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        return parsed.map(j => {
+          const matchInitial = ALL_SEED_JOBS.find(init => init.id === j.id);
+          const merged = matchInitial && matchInitial.assessment && !j.assessment
+            ? { ...j, assessment: matchInitial.assessment }
+            : j;
+          return withBranch(merged);
+        });
       } catch (e) {
         console.error('Failed to parse saved jobs', e);
       }
     }
-    return INITIAL_JOBS;
+    return ALL_SEED_JOBS.map(withBranch);
   });
 
   // Saved / Bookmarked job IDs
@@ -43,11 +63,23 @@ export function JobProvider({ children }) {
   const [selectedSalary, setSelectedSalary] = useState('Any');
   const [selectedSkill, setSelectedSkill] = useState('All');
   const [selectedJobType, setSelectedJobType] = useState('All');
-  const [sortBy, setSortBy] = useState('match'); // 'match', 'recent', 'salary'
+  const [selectedBranch, setSelectedBranch] = useState('All');
+  // Single source of truth for ordering; the options live in data/jobSortOptions.js
+  const [sortBy, setSortBy] = useState('match'); // 'match' | 'recent' | 'applicants' | 'title'
 
-  // Persist jobs & bookmarks
+  // "match" sorting is profile-based, so it is hidden from signed-out visitors
+  // (see data/jobSortOptions.js). They can still arrive here with that value as
+  // the default, which would leave the <select> showing nothing — so fall back to
+  // the first option they are actually allowed to pick.
+  const availableSortOptions = getSortOptions(Boolean(currentUser));
+  const effectiveSortBy = availableSortOptions.some((o) => o.value === sortBy)
+    ? sortBy
+    : availableSortOptions[0].value;
+
+  // Persist jobs & bookmarks (+ seed version so branch seed refreshes once)
   useEffect(() => {
     localStorage.setItem('sb_jobs', JSON.stringify(jobs));
+    localStorage.setItem('sb_jobs_ver', String(SEED_VERSION));
   }, [jobs]);
 
   useEffect(() => {
@@ -56,12 +88,15 @@ export function JobProvider({ children }) {
 
   // Recruiter actions
   const addJob = (jobData) => {
+    const branchId = jobData.branch || getBranchForCategory(jobData.category)?.id || 'general';
+    const branchInfo = getBranchForCategory(jobData.category);
     const newJob = {
       id: `job-${Date.now()}`,
       postedDate: 'Just now',
       applicantsCount: 0,
-      logoBg: '#2563EB',
-      ...jobData
+      logoBg: branchInfo?.color || '#2563EB',
+      ...jobData,
+      branch: branchId,
     };
     setJobs(prev => [newJob, ...prev]);
     return newJob;
@@ -73,6 +108,15 @@ export function JobProvider({ children }) {
 
   const deleteJob = (id) => {
     setJobs(prev => prev.filter(job => job.id !== id));
+  };
+
+  // Bump the advertised applicant count when a real application is submitted
+  const incrementApplicants = (jobId) => {
+    setJobs(prev => prev.map(job => (
+      String(job.id) === String(jobId)
+        ? { ...job, applicantsCount: (job.applicantsCount || 0) + 1 }
+        : job
+    )));
   };
 
   const getJobById = (id) => {
@@ -97,6 +141,7 @@ export function JobProvider({ children }) {
     setSearchQuery('');
     setLocationQuery('');
     setSelectedCategory('All');
+    setSelectedBranch('All');
     setSelectedWorkType('All');
     setSelectedExperience('All');
     setSelectedSalary('Any');
@@ -105,14 +150,15 @@ export function JobProvider({ children }) {
     setSortBy('match');
   };
 
-  // Estimate upper salary band (annual, in LPA) from a job's salary string
-  const estimateSalaryLPA = (salary = '') => {
-    const cleaned = salary.replace(/[₹,]/g, '');
-    const nums = cleaned.match(/\d+(?:\.\d+)?/g);
-    if (!nums || nums.length === 0) return Infinity;
-    const isMonthly = /month|stipend/i.test(salary);
-    const top = Number(nums[nums.length - 1]);
-    return isMonthly ? (top * 12) / 100000 : top / 100000;
+  // Filter jobs by salary band using robust salary parser
+  const passesSalaryFilter = (jobSalary, band) => {
+    if (band === 'Any') return true;
+    const lpa = estimateSalaryLPA(jobSalary);
+    if (band === 'Under ₹6 LPA') return lpa < 6;
+    if (band === '₹6 - 10 LPA') return lpa >= 6 && lpa < 10;
+    if (band === '₹10 - 20 LPA') return lpa >= 10 && lpa < 20;
+    if (band === '₹20 LPA+') return lpa >= 20;
+    return true;
   };
 
   // Memoized Filtered & Sorted Jobs
@@ -145,6 +191,12 @@ export function JobProvider({ children }) {
           if (!job.location.toLowerCase().includes(lq)) return false;
         }
 
+        // Branch filter (adapts catalog to candidate engineering branch)
+        if (selectedBranch !== 'All') {
+          const jobBranch = job.branch || getBranchForCategory(job.category)?.id || 'general';
+          if (jobBranch !== selectedBranch) return false;
+        }
+
         // Category filter
         if (selectedCategory !== 'All' && job.category !== selectedCategory) {
           return false;
@@ -172,12 +224,8 @@ export function JobProvider({ children }) {
         }
 
         // Salary band filter (upper annual estimate in LPA)
-        if (selectedSalary !== 'Any') {
-          const lpa = estimateSalaryLPA(job.salary);
-          if (selectedSalary === 'Under ₹6 LPA' && lpa >= 6) return false;
-          if (selectedSalary === '₹6 - 10 LPA' && (lpa < 6 || lpa >= 10)) return false;
-          if (selectedSalary === '₹10 - 20 LPA' && (lpa < 10 || lpa >= 20)) return false;
-          if (selectedSalary === '₹20 LPA+' && lpa < 20) return false;
+        if (selectedSalary !== 'Any' && !passesSalaryFilter(job.salary, selectedSalary)) {
+          return false;
         }
 
         // Specific Skill filter
@@ -191,13 +239,17 @@ export function JobProvider({ children }) {
         return true;
       })
       .sort((a, b) => {
-        if (sortBy === 'match') {
+        if (effectiveSortBy === 'match') {
           return b.matchData.matchPercentage - a.matchData.matchPercentage;
         }
-        if (sortBy === 'recent') {
-          return b.id.localeCompare(a.id);
+        if (effectiveSortBy === 'recent') {
+          return parsePostedDaysAgo(a.postedDate) - parsePostedDaysAgo(b.postedDate);
         }
-        if (sortBy === 'title') {
+        if (effectiveSortBy === 'applicants') {
+          // Fewest applicants first: the best chance of an early application.
+          return (a.applicantsCount || 0) - (b.applicantsCount || 0);
+        }
+        if (effectiveSortBy === 'title') {
           return a.title.localeCompare(b.title);
         }
         return 0;
@@ -208,13 +260,14 @@ export function JobProvider({ children }) {
     isFresherMode,
     searchQuery,
     locationQuery,
+    selectedBranch,
     selectedCategory,
     selectedWorkType,
     selectedExperience,
     selectedSalary,
     selectedSkill,
     selectedJobType,
-    sortBy
+    effectiveSortBy
   ]);
 
   return (
@@ -227,26 +280,29 @@ export function JobProvider({ children }) {
       addJob,
       editJob,
       deleteJob,
+      incrementApplicants,
       getJobById,
       searchQuery,
       setSearchQuery,
       locationQuery,
       setLocationQuery,
+      selectedBranch,
+      setSelectedBranch,
       selectedCategory,
       setSelectedCategory,
-selectedWorkType,
-    setSelectedWorkType,
-    selectedExperience,
-    setSelectedExperience,
-    selectedSalary,
-    setSelectedSalary,
-    selectedSkill,
-    setSelectedSkill,
-    selectedJobType,
-    setSelectedJobType,
-    sortBy,
-    setSortBy,
-    resetFilters
+      selectedWorkType,
+      setSelectedWorkType,
+      selectedExperience,
+      setSelectedExperience,
+      selectedSalary,
+      setSelectedSalary,
+      selectedSkill,
+      setSelectedSkill,
+      selectedJobType,
+      setSelectedJobType,
+      sortBy: effectiveSortBy,
+      setSortBy,
+      resetFilters
     }}>
       {children}
     </JobContext.Provider>

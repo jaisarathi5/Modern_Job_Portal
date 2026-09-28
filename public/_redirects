@@ -1,0 +1,4 @@
+# SPA fallback: the app uses BrowserRouter, so any deep link that is not a real
+# file (e.g. /jobs/job-3, /recruiter/post-job) must be rewritten to index.html
+# and resolved client-side. Without this, a hard refresh on those routes 404s.
+/*    /index.html   200

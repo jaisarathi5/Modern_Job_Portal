@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useApplications } from '../../context/ApplicationContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useJobs } from '../../context/JobContext';
 import { useToast } from './Toast';
+import Modal from './Modal';
+import Logo from './Logo';
+import { THEMES } from '../../data/accents';
 import { 
   FiBriefcase, 
   FiUser, 
@@ -15,12 +18,12 @@ import {
   FiLogIn, 
   FiMenu, 
   FiX, 
-  FiRefreshCw, 
-  FiZap,
   FiSun,
   FiMoon,
   FiSearch,
-  FiBell
+  FiBell,
+  FiSettings,
+  FiRotateCcw
 } from 'react-icons/fi';
 import '../../styles/navbar.css';
 
@@ -29,23 +32,45 @@ export default function Navbar() {
     role, 
     currentUser, 
     isFresherMode, 
-    toggleFresherMode, 
-    switchToStudent, 
-    switchToRecruiter, 
-    logout, 
-    resetDemoData 
+    toggleFresherMode,
+    logout,
+    resetDemoData
   } = useAuth();
   
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark, skin, setSkin } = useTheme();
   
-  const { getUserApplications } = useApplications();
+  const { applications, getUserApplications } = useApplications();
   const { addToast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const { searchQuery, setSearchQuery } = useJobs();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const settingsRef = useRef(null);
 
   const studentApps = currentUser ? getUserApplications(currentUser.id) : [];
+
+  // The bell is only "unread" when something genuinely needs attention, so the
+  // red dot stops lying:
+  //   jobseeker → applications that moved past the initial "Applied" stage
+  //   recruiter → applications still sitting at "Applied", i.e. awaiting review
+  const awaitingReview = applications.filter(app => app.status === 'Applied').length;
+  const movedApplications = studentApps.filter(app => app.status && app.status !== 'Applied').length;
+  const updateCount = !currentUser ? 0 : role === 'recruiter' ? awaitingReview : movedApplications;
+  const updatesLabel = role === 'recruiter' ? 'Applicants to review' : 'Application updates';
+  const updatesPath = role === 'recruiter' ? '/recruiter' : '/applications';
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   // When the portal layout (sidebar + filter) is active on Home/Jobs, hide the inline nav links
   const isPortalLayout = currentUser && (location.pathname === '/' || location.pathname === '/jobs');
@@ -58,17 +83,15 @@ export default function Navbar() {
     }
   };
 
-  const handleReset = () => {
-    if (window.confirm('Reset all demo jobs, applications, and student profiles to pristine state?')) {
-      resetDemoData();
-      addToast('Demo data reset successfully!', 'info');
-    }
-  };
-
   const handleLogout = () => {
     logout();
     addToast('Logged out of session', 'info');
     navigate('/login');
+  };
+
+  const handleResetDemoData = () => {
+    setResetConfirmOpen(false);
+    resetDemoData();
   };
 
   const getInitials = (name) => {
@@ -76,58 +99,41 @@ export default function Navbar() {
     return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
   };
 
+  // Shared swatch row for the settings menu and the mobile drawer. Swatches
+  // keep the menu open so users can compare themes without reopening it. Each
+  // one repaints the entire site, not just the brand chrome.
+  const renderThemeSwatches = (wrapperClass) => (
+    <div className={wrapperClass} role="group" aria-label="Site theme">
+      {THEMES.map((option) => {
+        const isActive = skin === option.id;
+        return (
+          <button
+            key={option.id}
+            type="button"
+            className={`settings-swatch${isActive ? ' active' : ''}`}
+            style={{ background: isDark ? option.darkSwatch : option.swatch }}
+            onClick={() => setSkin(option.id)}
+            aria-pressed={isActive}
+            aria-label={`${option.label} site theme`}
+            title={`${option.label} — ${option.note}`}
+          />
+        );
+      })}
+    </div>
+  );
+
   return (
     <header className="navbar-wrapper">
-      {/* Top Interactive Persona Switcher for Presentation & Demo */}
-      <div className="demo-banner">
-        <div className="container demo-banner-inner">
-          <div className="demo-banner-content">
-            <span className="demo-banner-badge">Preview Workspace</span>
-            <span>Switch Account Persona:</span>
-          </div>
-          <div className="demo-switch-group">
-            <button
-              type="button"
-              className={`demo-switch-btn ${role === 'jobseeker' ? 'active' : ''}`}
-              onClick={() => {
-                switchToStudent();
-                addToast('Switched to Candidate View (Alex Chen)', 'info');
-              }}
-            >
-              👤 Candidate (Alex Chen)
-            </button>
-            <button
-              type="button"
-              className={`demo-switch-btn ${role === 'recruiter' ? 'active' : ''}`}
-              onClick={() => {
-                switchToRecruiter();
-                addToast('Switched to Employer View (Sarah Miller)', 'info');
-              }}
-            >
-              🏢 Employer (Sarah Miller)
-            </button>
-            <button
-              type="button"
-              className="demo-switch-btn"
-              onClick={handleReset}
-              title="Reset to default mock state"
-            >
-              <FiRefreshCw style={{ verticalAlign: 'middle', marginRight: '3px' }} /> Reset Data
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Main Navbar */}
       <div className="main-navbar">
         {/* Brand */}
         <Link to="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)}>
           <div className="brand-icon-box">
-            <FiZap />
+            <Logo variant="icon" size={24} mono />
           </div>
           <div className="brand-text-group">
             <span className="brand-title">Skill<span>Bridge</span></span>
-            <span className="brand-subtitle">Tech Job Portal</span>
+            <span className="brand-subtitle">Engineering Job Portal</span>
           </div>
         </Link>
 
@@ -215,74 +221,83 @@ export default function Navbar() {
           </form>
         )}
 
-        {/* Right Actions: Theme Toggle, Fresher Mode, User Profile / Auth */}
+        {/* Right Actions: consolidated settings menu and mobile navigation */}
         <div className="nav-actions">
-          {/* Notification bell (decorative) */}
-          <button
-            type="button"
-            className="notification-btn"
-            title="Notifications"
-            aria-label="Notifications"
-          >
-            <FiBell />
-            <span className="notification-dot"></span>
-          </button>
+          <div className="settings-menu-wrap" ref={settingsRef}>
+            <button
+              type="button"
+              className={`settings-menu-trigger ${settingsOpen ? 'active' : ''}`}
+              onClick={() => setSettingsOpen(prev => !prev)}
+              aria-label="Open settings menu"
+              aria-expanded={settingsOpen}
+              title="Settings and account"
+            >
+              <FiSettings />
+              {isFresherMode && <span className="settings-active-dot" />}
+            </button>
 
-          {/* Dark / Light Mode Toggle Button */}
-          <button
-            type="button"
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            aria-label="Toggle Dark / Light Theme"
-          >
-            {isDark ? <FiSun className="theme-icon sun" /> : <FiMoon className="theme-icon moon" />}
-          </button>
+            {settingsOpen && (
+              <div className="settings-menu" role="menu">
+                <div className="settings-menu-heading">Preferences</div>
+                <button type="button" className="settings-menu-item" onClick={() => { toggleTheme(); setSettingsOpen(false); }} role="menuitem">
+                  <span className="settings-menu-icon">{isDark ? <FiSun /> : <FiMoon />}</span>
+                  <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
+                </button>
+                <div className="settings-menu-subheading">Site theme</div>
+                {renderThemeSwatches('settings-swatch-row')}
+                <button type="button" className="settings-menu-item" onClick={toggleFresherMode} role="menuitem">
+                  <span className="settings-menu-icon"><span className="fresher-dot"></span></span>
+                  <span>Fresher mode <strong>{isFresherMode ? 'On' : 'Off'}</strong></span>
+                </button>
+                {currentUser && (
+                  <button
+                    type="button"
+                    className="settings-menu-item"
+                    role="menuitem"
+                    title={updatesLabel}
+                    onClick={() => { setSettingsOpen(false); navigate(updatesPath); }}
+                  >
+                    <span className="settings-menu-icon settings-notification-icon">
+                      <FiBell />
+                      {updateCount > 0 && <span className="notification-dot" />}
+                    </span>
+                    <span>
+                      {updatesLabel}
+                      {updateCount > 0 && <strong>{updateCount}</strong>}
+                    </span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className="settings-menu-item"
+                  role="menuitem"
+                  onClick={() => { setResetConfirmOpen(true); setSettingsOpen(false); }}
+                >
+                  <span className="settings-menu-icon"><FiRotateCcw /></span>
+                  <span>Reset demo data</span>
+                </button>
 
-          {/* Fresher Mode Switcher */}
-          <button
-            type="button"
-            className={`fresher-toggle-pill ${isFresherMode ? 'active' : ''}`}
-            onClick={toggleFresherMode}
-            title="Toggle Fresher Mode (Prioritize 0-1 years exp)"
-          >
-            <span className="fresher-dot"></span>
-            <span>🌱 Fresher Mode: {isFresherMode ? 'ON' : 'OFF'}</span>
-          </button>
-
-          {/* User Section / Login & Sign Up Actions */}
-          {currentUser ? (
-            <div className="user-badge-group">
-              <Link to={role === 'recruiter' ? '/recruiter' : '/profile'} className="user-avatar-link" title={currentUser.name}>
-                <div className="user-avatar">
-                  {getInitials(currentUser.name)}
-                </div>
-              </Link>
-              <div className="user-info">
-                <span className="user-name">{currentUser.name}</span>
-                <span className="user-role-label">
-                  {role === 'recruiter' ? '🏢 Recruiter' : '🎓 Job Seeker'}
-                </span>
+                <div className="settings-menu-divider"></div>
+                {currentUser ? (
+                  <>
+                    <Link to={role === 'recruiter' ? '/recruiter' : '/profile'} className="settings-menu-account" onClick={() => setSettingsOpen(false)}>
+                      <span className="user-avatar">{getInitials(currentUser.name)}</span>
+                      <span><strong>{currentUser.name}</strong><small>{role === 'recruiter' ? 'Recruiter' : 'Job Seeker'}</small></span>
+                    </Link>
+                    <button type="button" className="settings-menu-item settings-logout" onClick={handleLogout} role="menuitem">
+                      <span className="settings-menu-icon"><FiLogOut /></span>
+                      <span>Log out</span>
+                    </button>
+                  </>
+                ) : (
+                  <div className="settings-auth-actions">
+                    <Link to="/login" className="btn btn-nav-login" onClick={() => setSettingsOpen(false)}><FiLogIn /> Log in</Link>
+                    <Link to="/register" className="btn btn-nav-signup" onClick={() => setSettingsOpen(false)}>Sign up</Link>
+                  </div>
+                )}
               </div>
-              <button
-                type="button"
-                className="btn btn-ghost btn-sm btn-logout"
-                onClick={handleLogout}
-                title="Log Out"
-              >
-                <FiLogOut />
-              </button>
-            </div>
-          ) : (
-            <div className="auth-nav-buttons">
-              <Link to="/login" className="btn btn-nav-login">
-                <FiLogIn /> Log In
-              </Link>
-              <Link to="/register" className="btn btn-nav-signup">
-                Sign Up
-              </Link>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Mobile hamburger button */}
           <button
@@ -318,6 +333,8 @@ export default function Navbar() {
           </button>
         </div>
 
+        {renderThemeSwatches('mobile-swatch-row')}
+
         <NavLink to="/" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Home</NavLink>
         <NavLink to="/jobs" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Find Jobs</NavLink>
         <NavLink to="/resume-analyzer" className="nav-link" onClick={() => setMobileMenuOpen(false)}>Resume Matcher</NavLink>
@@ -340,7 +357,7 @@ export default function Navbar() {
         {currentUser ? (
           <div style={{ paddingTop: '0.75rem', borderTop: '1px solid var(--border-light)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span>Signed in as <strong>{currentUser.name}</strong></span>
-            <button className="btn btn-outline btn-sm" onClick={handleLogout}>Log Out</button>
+            <button type="button" className="btn btn-outline btn-sm" onClick={handleLogout}>Log Out</button>
           </div>
         ) : (
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
@@ -349,6 +366,33 @@ export default function Navbar() {
           </div>
         )}
       </div>
+
+      {/* Destructive demo reset, confirmed before it clears local storage */}
+      <Modal
+        isOpen={resetConfirmOpen}
+        onClose={() => setResetConfirmOpen(false)}
+        title="Reset demo data"
+        maxWidth="440px"
+      >
+        <p style={{ fontSize: '0.95rem', marginBottom: '1.25rem' }}>
+          This restores the seeded demo jobs, applications and student profile, and erases
+          everything created in this browser — bookmarks, assessment results and any accounts
+          you registered. The page will reload.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem' }}>
+          <button type="button" className="btn btn-outline" onClick={() => setResetConfirmOpen(false)}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            style={{ backgroundColor: 'var(--accent-rose)' }}
+            onClick={handleResetDemoData}
+          >
+            Yes, reset demo data
+          </button>
+        </div>
+      </Modal>
     </header>
   );
 }

@@ -4,15 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { analyzeResumeText, COMMON_SKILLS_DICTIONARY } from '../utils/resumeParser';
 import MatchScore from '../components/jobs/MatchScore';
 import SkillBadge from '../components/jobs/SkillBadge';
-import { 
-  FiFileText, 
-  FiCheckCircle, 
-  FiAlertTriangle, 
-  FiRefreshCw, 
-  FiUpload, 
-  FiLayers, 
-  FiCompass 
-} from 'react-icons/fi';
+import { FiCheckCircle, FiAlertTriangle, FiLayers } from 'react-icons/fi';
 import '../styles/resume-analyzer.css';
 
 export default function ResumeAnalyzer() {
@@ -50,11 +42,11 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
     <div className="resume-analyzer-page">
       <div className="container">
         {/* Header */}
-        <div style={{ maxWidth: '720px', marginBottom: '2rem' }}>
+        <div className="page-header" style={{ marginBottom: '2rem' }}>
           <span className="badge badge-wine" style={{ marginBottom: '0.4rem' }}>
             Frontend Rule Engine
           </span>
-          <h1 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>
+          <h1 style={{ marginBottom: '0.5rem' }}>
             Resume Keyword Matcher
           </h1>
           <p>
@@ -149,18 +141,35 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
 
             {/* Score Box */}
             <div className="resume-score-card">
-              <MatchScore percentage={analysis.keywordMatchScore} size="lg" />
-              <div style={{ marginTop: '0.75rem', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-navy)' }}>
-                {analysis.keywordMatchScore}% Keyword Alignment
-              </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
-                Found <strong>{analysis.skillsFound.length}</strong> of <strong>{targetSkills.length}</strong> target skills in resume text.
-              </p>
+              {currentUser ? (
+                <>
+                  <MatchScore percentage={analysis.keywordMatchScore} size="lg" />
+                  <div style={{ marginTop: '0.75rem', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-navy)' }}>
+                    {analysis.keywordMatchScore}% Keyword Alignment
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
+                    Found <strong>{analysis.skillsFound.length}</strong> of <strong>{targetSkills.length}</strong> target skills in resume text.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <MatchScore percentage={0} size="lg" />
+                  <div style={{ marginTop: '0.75rem', fontWeight: 700, fontSize: '1.05rem', color: 'var(--primary-navy)' }}>
+                    Sign in to see your results
+                  </div>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', margin: '0.35rem 0 0' }}>
+                    Keyword alignment is scored against your profile. Create a free account to see your score and skill gaps.
+                  </p>
+                </>
+              )}
             </div>
 
+            {/* Everything below the score is a personal result too. */}
+            {currentUser && (
+              <>
             {/* Readiness Advice */}
             <div style={{
-              background: '#f8fafc',
+              background: 'var(--bg-subtle)',
               border: '1px solid var(--border-light)',
               borderRadius: '10px',
               padding: '1rem',
@@ -173,9 +182,9 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
 
             {/* Skills Found */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#166534', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-success)', marginBottom: '0.5rem' }}>
                 <FiCheckCircle />
-                <h4 style={{ margin: 0, fontSize: '0.98rem', color: '#166534' }}>
+                <h4 style={{ margin: 0, fontSize: '0.98rem', color: 'var(--text-success)' }}>
                   Skills Found in Resume ({analysis.skillsFound.length})
                 </h4>
               </div>
@@ -194,9 +203,9 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
 
             {/* Skills Missing */}
             <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#854D0E', marginBottom: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--text-warning)', marginBottom: '0.5rem' }}>
                 <FiAlertTriangle />
-                <h4 style={{ margin: 0, fontSize: '0.98rem', color: '#854D0E' }}>
+                <h4 style={{ margin: 0, fontSize: '0.98rem', color: 'var(--text-warning)' }}>
                   Skills Missing from Resume ({analysis.skillsMissing.length})
                 </h4>
               </div>
@@ -207,7 +216,7 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
                   ))}
                 </div>
               ) : (
-                <p style={{ fontSize: '0.84rem', color: '#155724', fontWeight: 600 }}>
+                <p style={{ fontSize: '0.84rem', color: 'var(--text-success)', fontWeight: 600 }}>
                   🎉 All required keywords are present in your resume!
                 </p>
               )}
@@ -226,6 +235,8 @@ Computer Science & Engineering graduate with experience in React, JavaScript, HT
                 ))}
               </div>
             </div>
+              </>
+            )}
           </div>
         </div>
       </div>

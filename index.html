@@ -2,9 +2,43 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SkillBridge | Student & Fresher Smart Job Portal</title>
+    <link rel="icon" type="image/svg+xml" href="/skillbridge-mark.svg" />
+    <!-- viewport-fit=cover is required for env(safe-area-inset-*) to report
+         real values on notched iPhones; the responsive stylesheet pads the
+         navbar, drawers and footer by those insets so nothing hides under
+         the notch or the home indicator. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#141a34" />
+    <title>SkillBridge | Engineering Student & Fresher Job Portal</title>
+    <!--
+      Apply the saved colour scheme + skin to <html> before first paint.
+      Without this the page paints with the light :root tokens first, then
+      ThemeContext corrects it after hydration — a visible white flash for
+      anyone who chose dark mode. Mirrors applyThemeToDom() in ThemeContext.
+    -->
+    <script>
+      (function () {
+        try {
+          var root = document.documentElement;
+          var theme = localStorage.getItem('sb_theme');
+          if (!theme) {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+              ? 'dark' : 'light';
+          }
+          root.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light');
+          if (theme === 'dark') root.classList.add('dark');
+          else root.classList.remove('dark');
+          var skin = localStorage.getItem('sb_skin');
+          if (skin) root.setAttribute('data-skin', skin);
+        } catch (e) {
+          /* Private browsing / storage disabled: fall through to the light default. */
+        }
+      })();
+    </script>
+    <meta
+      name="description"
+      content="SkillBridge connects engineering students and freshers across every discipline — CSE, ECE, EEE, Mechanical, Civil, Chemical and more — with employers, using real-time skill match scoring."
+    />
     <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

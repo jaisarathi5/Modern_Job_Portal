@@ -7,7 +7,7 @@ import MatchScore from '../components/jobs/MatchScore';
 import { FiCheckSquare, FiFilter, FiInbox, FiArrowRight, FiClock, FiMapPin, FiDollarSign } from 'react-icons/fi';
 import '../styles/dashboard.css';
 
-const STATUS_FILTERS = ['All', 'Applied', 'Shortlisted', 'Interview', 'Selected', 'Rejected'];
+const STATUS_FILTERS = ['All', 'Applied', 'Assessment Completed', 'Shortlisted', 'Interview', 'Selected', 'Rejected'];
 
 export default function Applications() {
   const { currentUser } = useAuth();
@@ -32,7 +32,7 @@ export default function Applications() {
             </span>
             <h1>Application Tracker</h1>
             <p>
-              Monitor each submission through the recruitment lifecycle: screening, shortlisting, technical interviews, and offers.
+              Monitor each submission through the recruitment lifecycle: screening, assessments, shortlisting, technical interviews, and offers.
             </p>
           </div>
 
@@ -83,6 +83,7 @@ export default function Applications() {
                       <span className={`badge ${
                         app.status === 'Selected' ? 'badge-fresher' :
                         app.status === 'Interview' ? 'badge-blue' :
+                        app.status === 'Assessment Completed' ? 'badge-blue' :
                         app.status === 'Shortlisted' ? 'badge-indigo' : 'badge-navy'
                       }`}>
                         {app.status}
@@ -106,7 +107,17 @@ export default function Applications() {
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+                    {app.assessmentScore !== null && app.assessmentScore !== undefined && (
+                      <span className="badge badge-peach" title="Verified Assessment Score" style={{ fontSize: '0.78rem' }}>
+                        Assessment: {app.assessmentScore}%
+                      </span>
+                    )}
+                    {app.roleReadiness !== null && app.roleReadiness !== undefined && (
+                      <span className="badge badge-indigo" title="Calculated Role Readiness" style={{ fontSize: '0.78rem' }}>
+                        Readiness: {app.roleReadiness}%
+                      </span>
+                    )}
                     <MatchScore percentage={app.matchPercentage} variant="badge" />
                     <Link to={`/jobs/${app.jobId}`} className="btn btn-outline btn-sm">
                       Job Details <FiArrowRight />

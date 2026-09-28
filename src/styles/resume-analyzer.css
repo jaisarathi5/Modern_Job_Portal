@@ -1,12 +1,12 @@
 /* Resume Analyzer Styles */
 .resume-analyzer-page {
-  padding: 2.5rem 0 4.5rem;
+  padding: var(--page-pt) 0 var(--page-pb);
 }
 
 .resume-layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2rem;
+  gap: var(--space-8);
   align-items: flex-start;
 }
 
@@ -14,17 +14,17 @@
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
-  padding: 2rem;
+  padding: var(--card-pad);
   box-shadow: var(--shadow-sm);
 }
 
 .resume-score-card {
   background: var(--bg-subtle);
   border-radius: var(--radius-md);
-  padding: 1.5rem;
+  padding: var(--space-6);
   border: 1px solid var(--border-light);
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-6);
 }
 
 @media (max-width: 992px) {

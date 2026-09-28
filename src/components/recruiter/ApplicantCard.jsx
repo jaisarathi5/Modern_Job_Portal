@@ -23,6 +23,8 @@ export default function ApplicantCard({ application, requiredSkills = [] }) {
 
   const getStatusBadge = (status) => {
     switch (status) {
+      case 'Assessment Completed':
+        return 'badge-blue';
       case 'Shortlisted':
         return 'badge-peach';
       case 'Interview':
@@ -36,9 +38,11 @@ export default function ApplicantCard({ application, requiredSkills = [] }) {
     }
   };
 
+  const hasAssessment = application.assessmentScore !== null && application.assessmentScore !== undefined;
+
   return (
-    <div className="card" style={{ padding: '1.4rem', borderLeft: '4px solid var(--primary-wine)' }}>
-      {/* Top row: Name, Match, and Current Status */}
+    <div className="card" style={{ padding: '1.4rem', borderLeft: `4px solid ${hasAssessment ? 'var(--accent-indigo)' : 'var(--primary-wine)'}` }}>
+      {/* Top row: Name, Match, Assessment Score, Role Readiness */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '0.85rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.2rem' }}>
@@ -59,10 +63,80 @@ export default function ApplicantCard({ application, requiredSkills = [] }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-          <MatchScore percentage={application.matchPercentage} variant="badge" />
+        {/* Metrics Row: Role Readiness + Assessment Score + Profile Match */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', flexWrap: 'wrap' }}>
+          {hasAssessment && (
+            <>
+              <div style={{
+                background: 'var(--bg-subtle)',
+                border: '1px solid var(--border-medium)',
+                borderRadius: '8px',
+                padding: '0.3rem 0.65rem',
+                textAlign: 'center'
+              }}>
+                <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>Role Readiness</span>
+                <strong style={{ fontSize: '1.05rem', color: 'var(--primary-navy)' }}>{application.roleReadiness}%</strong>
+              </div>
+
+              <div style={{
+                background: 'var(--tone-blue-bg)',
+                border: '1px solid var(--tone-blue-border)',
+                borderRadius: '8px',
+                padding: '0.3rem 0.65rem',
+                textAlign: 'center'
+              }}>
+                <span style={{ fontSize: '0.68rem', color: 'var(--tone-blue)', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>Assessment</span>
+                <strong style={{ fontSize: '1.05rem', color: 'var(--accent-indigo)' }}>{application.assessmentScore}%</strong>
+              </div>
+            </>
+          )}
+
+          <div style={{
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-light)',
+            borderRadius: '8px',
+            padding: '0.3rem 0.65rem',
+            textAlign: 'center'
+          }}>
+            <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>Profile Match</span>
+            <strong style={{ fontSize: '1.05rem', color: 'var(--primary-blue)' }}>{application.matchPercentage}%</strong>
+          </div>
         </div>
       </div>
+
+      {/* Category Performance Breakdown if verified assessment exists */}
+      {hasAssessment && application.categoryScores && (
+        <div style={{
+          backgroundColor: 'var(--bg-subtle)',
+          borderRadius: '8px',
+          padding: '0.65rem 0.9rem',
+          marginBottom: '0.9rem',
+          border: '1px solid var(--border-light)'
+        }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: '0.35rem' }}>
+            Category Performance:
+          </span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+            {Object.values(application.categoryScores).map(cat => (
+              <span key={cat.category} style={{
+                fontSize: '0.8rem',
+                background: 'var(--bg-card)',
+                padding: '0.2rem 0.55rem',
+                borderRadius: '6px',
+                border: '1px solid var(--border-medium)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.3rem'
+              }}>
+                <span style={{ color: 'var(--text-secondary)' }}>{cat.label}:</span>
+                <strong style={{ color: cat.percentage >= 70 ? 'var(--success)' : cat.percentage >= 40 ? 'var(--warning)' : 'var(--danger)' }}>
+                  {cat.percentage}%
+                </strong>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Candidate Skills */}
       <div style={{ marginBottom: '0.9rem' }}>
@@ -120,52 +194,32 @@ export default function ApplicantCard({ application, requiredSkills = [] }) {
         <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
           <button
             type="button"
-            className="btn btn-sm"
-            style={{
-              backgroundColor: application.status === 'Shortlisted' ? '#eef2ff' : 'var(--bg-subtle)',
-              borderColor: application.status === 'Shortlisted' ? '#c7d2fe' : 'var(--border-medium)',
-              color: application.status === 'Shortlisted' ? '#4338ca' : 'var(--text-secondary)',
-              fontWeight: application.status === 'Shortlisted' ? 600 : 400
-            }}
+            className={`btn btn-sm btn-status ${application.status === 'Shortlisted' ? 'is-active' : ''}`}
+            data-tone="indigo"
             onClick={() => handleStatusChange('Shortlisted')}
           >
             Shortlist
           </button>
           <button
             type="button"
-            className="btn btn-sm"
-            style={{
-              backgroundColor: application.status === 'Interview' ? '#eff6ff' : 'var(--bg-subtle)',
-              borderColor: application.status === 'Interview' ? '#bfdbfe' : 'var(--border-medium)',
-              color: application.status === 'Interview' ? '#1d4ed8' : 'var(--text-secondary)',
-              fontWeight: application.status === 'Interview' ? 600 : 400
-            }}
+            className={`btn btn-sm btn-status ${application.status === 'Interview' ? 'is-active' : ''}`}
+            data-tone="blue"
             onClick={() => handleStatusChange('Interview')}
           >
             Interview
           </button>
           <button
             type="button"
-            className="btn btn-sm"
-            style={{
-              backgroundColor: application.status === 'Selected' ? '#ecfdf5' : 'var(--bg-subtle)',
-              borderColor: application.status === 'Selected' ? '#a7f3d0' : 'var(--border-medium)',
-              color: application.status === 'Selected' ? '#047857' : 'var(--text-secondary)',
-              fontWeight: application.status === 'Selected' ? 600 : 400
-            }}
+            className={`btn btn-sm btn-status ${application.status === 'Selected' ? 'is-active' : ''}`}
+            data-tone="success"
             onClick={() => handleStatusChange('Selected')}
           >
             Select / Offer
           </button>
           <button
             type="button"
-            className="btn btn-sm"
-            style={{
-              backgroundColor: application.status === 'Rejected' ? '#fef2f2' : 'var(--bg-subtle)',
-              borderColor: application.status === 'Rejected' ? '#fecaca' : 'var(--border-medium)',
-              color: application.status === 'Rejected' ? '#dc2626' : 'var(--text-secondary)',
-              fontWeight: application.status === 'Rejected' ? 600 : 400
-            }}
+            className={`btn btn-sm btn-status ${application.status === 'Rejected' ? 'is-active' : ''}`}
+            data-tone="danger"
             onClick={() => handleStatusChange('Rejected')}
           >
             Reject

@@ -9,7 +9,18 @@
 
 html {
   font-size: 16px;
+  /* Smooth scrolling stays on the document root only. Scoped to html so it
+     never makes nested scroll regions (sidebar, listings, filters) — or
+     instantaneous expand/collapse interactions like the FAQ accordion — glide
+     the whole page while the browser re-anchors content. */
   scroll-behavior: smooth;
+}
+
+.layout-sidebar,
+.layout-main,
+.layout-filter,
+.faq-accordion {
+  scroll-behavior: auto;
 }
 
 body {
@@ -33,23 +44,29 @@ main.app-main {
   flex: 1;
 }
 
-/* Headings */
+/* --------------------------------------------------------------------------
+   Typography — one scale, balanced wraps, aligned to a shared rhythm
+   -------------------------------------------------------------------------- */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  color: var(--primary-wine);
+  color: var(--primary-navy);
   font-weight: 700;
   line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
 }
 
-h1 { font-size: 2.35rem; }
-h2 { font-size: 1.85rem; }
-h3 { font-size: 1.4rem; }
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
 h4 { font-size: 1.15rem; }
 h5 { font-size: 1rem; }
 
 p {
   color: var(--text-secondary);
   font-size: 0.96rem;
+  line-height: 1.65;
+  text-wrap: pretty;
 }
 
 a {
@@ -59,36 +76,130 @@ a {
 }
 
 a:hover {
-  color: var(--primary-wine);
+  color: var(--primary-wine-hover);
 }
 
-/* Common Layout Containers */
+/* Keyboard affordance: consistent ring on every interactive element */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+/* Keyboard users can jump straight past the navbar into the page content;
+   the link stays off-screen until it is focused. */
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: -9999px;
+  z-index: 1100;
+  padding: 0.65rem 1.1rem;
+  background-color: var(--primary-navy);
+  color: var(--on-accent);
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: 0 0 var(--radius-md) 0;
+}
+
+.skip-link:focus {
+  left: 0;
+}
+
+/* ------------------------------------------------------------ Containers */
 .container {
-  max-width: 1240px;
+  max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--layout-gutter);
 }
 
 .container-narrow {
-  max-width: 860px;
+  max-width: 880px;
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 var(--layout-gutter);
 }
 
-/* Buttons */
+.job-company-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  border-radius: 7px;
+  background: #fff;
+}
+
+.job-company-initial.fallback {
+  display: none;
+}
+
+/* Every full page shares the same vertical rhythm; horizontal gutters stay
+   owned by .container, so `class="container page"` composes correctly. */
+.page {
+  padding-top: var(--page-pt);
+  padding-bottom: var(--page-pb);
+}
+
+.page-narrow {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: var(--page-pt) var(--layout-gutter) var(--page-pb);
+}
+
+/* Page headers all start at the same optical line: eyebrow → title → lead */
+.page-header,
+.section-head {
+  margin-bottom: var(--section-gap);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  max-width: 760px;
+}
+
+.page-header h1,
+.page-header h2,
+.section-head h2 {
+  margin: 0;
+}
+
+.page-header p,
+.section-head p {
+  margin: 0;
+  font-size: var(--fs-lead);
+  color: var(--text-secondary);
+}
+
+/* Split header: title block on the left, actions on the right — always centered */
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-bottom: var(--section-gap);
+}
+
+.page-header-row .page-header {
+  margin-bottom: 0;
+}
+
+/* ---------------------------------------------------------------- Buttons
+   All buttons share one height scale, so any row of buttons lines up exactly.
+   ------------------------------------------------------------------------- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  min-height: var(--control-h);
   font-family: var(--font-body);
   font-weight: 600;
   font-size: 0.92rem;
-  padding: 0.65rem 1.25rem;
+  line-height: 1;
+  padding: 0 1.25rem;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: background-color var(--transition-fast), border-color var(--transition-fast),
+              color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -101,33 +212,33 @@ a:hover {
 
 .btn-primary {
   background-color: var(--primary-blue);
-  color: #ffffff;
+  color: var(--on-accent);
   border-color: var(--primary-blue);
-  box-shadow: 0 1px 2px 0 rgba(37, 99, 235, 0.1);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-primary:hover {
   background-color: var(--primary-blue-hover);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-brand);
   transform: translateY(-1px);
 }
 
 .btn-secondary {
   background-color: var(--primary-navy);
-  color: #ffffff;
+  color: var(--on-accent);
   border-color: var(--primary-navy);
 }
 
 .btn-secondary:hover {
   background-color: var(--primary-navy-hover);
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
 .btn-outline {
-  background-color: #ffffff;
+  background-color: var(--bg-card);
   color: var(--text-primary);
   border-color: var(--border-medium);
 }
@@ -141,11 +252,11 @@ a:hover {
 .btn-soft {
   background-color: var(--primary-blue-light);
   color: var(--primary-blue);
-  border: 1px solid #bfdbfe;
+  border-color: var(--info-border);
 }
 
 .btn-soft:hover {
-  background-color: #dbeafe;
+  background-color: var(--info-border);
   color: var(--primary-blue-hover);
 }
 
@@ -160,20 +271,95 @@ a:hover {
   color: var(--primary-blue);
 }
 
+/* Quiet destructive action */
+.btn-danger {
+  background-color: var(--danger);
+  color: var(--on-accent);
+  border-color: var(--danger);
+}
+
+.btn-danger:hover {
+  background-color: var(--text-danger);
+  color: var(--on-accent);
+  box-shadow: var(--shadow-md);
+}
+
 .btn-sm {
-  padding: 0.4rem 0.85rem;
+  min-height: var(--control-h-sm);
+  padding: 0 0.9rem;
   font-size: 0.82rem;
   border-radius: var(--radius-sm);
 }
 
 .btn-lg {
-  padding: 0.85rem 1.6rem;
+  min-height: var(--control-h-lg);
+  padding: 0 1.6rem;
   font-size: 1rem;
   border-radius: var(--radius-md);
   font-weight: 700;
 }
 
-/* Badges */
+/* Square icon-only button that still matches the height scale */
+.btn-icon {
+  width: var(--control-h);
+  min-height: var(--control-h);
+  padding: 0;
+  border-radius: var(--radius-full);
+}
+
+.btn-icon.btn-sm {
+  width: var(--control-h-sm);
+  min-height: var(--control-h-sm);
+}
+
+/* ---------------------------------------------------- Toggle/status buttons
+   Used by the recruiter pipeline. Colour comes from data-tone, so the JSX
+   stays declarative and dark mode is automatic.
+   ------------------------------------------------------------------------- */
+.btn-status {
+  background-color: var(--bg-subtle);
+  border-color: var(--border-medium);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.btn-status:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn-status.is-active[data-tone="indigo"] {
+  background-color: var(--tone-indigo-bg);
+  border-color: var(--tone-indigo-border);
+  color: var(--tone-indigo);
+  font-weight: 700;
+}
+
+.btn-status.is-active[data-tone="blue"] {
+  background-color: var(--tone-blue-bg);
+  border-color: var(--tone-blue-border);
+  color: var(--tone-blue);
+  font-weight: 700;
+}
+
+.btn-status.is-active[data-tone="success"] {
+  background-color: var(--tone-success-bg);
+  border-color: var(--tone-success-border);
+  color: var(--tone-success);
+  font-weight: 700;
+}
+
+.btn-status.is-active[data-tone="danger"] {
+  background-color: var(--tone-danger-bg);
+  border-color: var(--tone-danger-border);
+  color: var(--tone-danger);
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ Badges
+   One soft, tinted badge system. Every variant is a bg/border/text triplet
+   pulled from the tokens, so light and dark mode stay in sync.
+   ------------------------------------------------------------------------- */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -182,68 +368,121 @@ a:hover {
   font-weight: 600;
   padding: 0.25rem 0.65rem;
   border-radius: var(--radius-full);
-  line-height: 1.2;
+  line-height: 1.3;
+  border: 1px solid transparent;
+  white-space: nowrap;
 }
 
-.badge-wine {
+/* Solid ink chip — for primary labels */
+.badge-wine,
+.badge-navy {
   background: var(--primary-navy);
-  color: #FFFFFF;
+  color: var(--on-accent);
+  border-color: var(--primary-navy);
 }
 
-.badge-rose {
-  background: var(--primary-blue-light);
-  color: var(--primary-blue);
-  border: 1px solid #bfdbfe;
+/* Indigo tints */
+.badge-rose,
+.badge-indigo {
+  background: var(--tone-indigo-bg);
+  color: var(--tone-indigo);
+  border-color: var(--tone-indigo-border);
 }
 
 .badge-peach {
-  background: var(--accent-indigo-light);
-  color: var(--accent-indigo);
-  border: 1px solid #c7d2fe;
+  background: var(--tone-indigo-bg);
+  color: var(--tone-indigo);
+  border-color: var(--tone-indigo-border);
 }
 
-.badge-cream {
-  background: var(--bg-subtle);
-  color: var(--text-secondary);
-  border: 1px solid var(--border-medium);
+/* Blue tint (assessment / process states) */
+.badge-blue {
+  background: var(--tone-blue-bg);
+  color: var(--tone-blue);
+  border-color: var(--tone-blue-border);
 }
 
-.badge-fresher {
-  background: var(--success-bg);
-  color: var(--success-dark);
-  border: 1px solid var(--success-border);
+/* Neutral */
+.badge-cream,
+.badge-neutral {
+  background: var(--tone-neutral-bg);
+  color: var(--tone-neutral);
+  border-color: var(--tone-neutral-border);
+}
+
+/* Positive */
+.badge-fresher,
+.badge-success {
+  background: var(--tone-success-bg);
+  color: var(--tone-success);
+  border-color: var(--tone-success-border);
   font-weight: 600;
 }
 
+.badge-warning {
+  background: var(--tone-warning-bg);
+  color: var(--tone-warning);
+  border-color: var(--tone-warning-border);
+}
+
+.badge-danger {
+  background: var(--tone-danger-bg);
+  color: var(--tone-danger);
+  border-color: var(--tone-danger-border);
+}
+
+/* Match-score scale */
 .badge-match-high {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
+  background: var(--tone-success-bg);
+  color: var(--tone-success);
+  border-color: var(--tone-success-border);
 }
 
 .badge-match-med {
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
+  background: var(--tone-warning-bg);
+  color: var(--tone-warning);
+  border-color: var(--tone-warning-border);
 }
 
 .badge-match-low {
-  background: #f1f5f9;
-  color: #64748b;
-  border: 1px solid #e2e8f0;
+  background: var(--tone-neutral-bg);
+  color: var(--tone-neutral);
+  border-color: var(--tone-neutral-border);
 }
 
-/* Cards */
+/* Small colour dot used inside match badges */
+.badge-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------- Cards
+   One radius, one border, one shadow. Padding is intentional per usage.
+   ------------------------------------------------------------------------- */
 .card {
   background-color: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
   box-shadow: var(--shadow-sm);
-  transition: all var(--transition-normal);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal),
+              transform var(--transition-normal);
 }
 
 .card:hover {
   border-color: var(--border-medium);
+}
+
+/* Standard inner padding for any card that is not a list of rows */
+.card-pad {
+  padding: var(--card-pad);
+}
+
+.card-pad-sm {
+  padding: var(--card-pad-sm);
 }
 
 .card-interactive {
@@ -252,23 +491,99 @@ a:hover {
 
 .card-interactive:hover {
   box-shadow: var(--shadow-hover);
-  border-color: var(--primary-blue);
+  border-color: var(--border-strong);
   transform: translateY(-3px);
 }
 
-/* Empty States */
+/* ------------------------------------------------------------ Empty States */
 .empty-state {
   text-align: center;
-  padding: 3.5rem 1.5rem;
+  padding: var(--space-12) var(--space-6);
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px dashed var(--border-medium);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@keyframes cardRiseIn {
+  from { opacity: 0; transform: translateY(18px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.route-fade {
+  animation: routeFadeIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes routeFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-fade { animation: none !important; }
+}
+
+/* --------------------------------------------------- Theme switch reveal
+   ThemeContext.jsx runs a view transition whose "new" snapshot grows as a
+   circle from the centre of the viewport. The default cross-fade is replaced
+   by that reveal: the old theme stays put underneath (z-index 1) while the new
+   theme is clipped on top (z-index 2) and expands to --theme-reveal-radius,
+   the distance from the centre to the farthest corner.
+   ------------------------------------------------------------------------- */
+::view-transition-old(root) {
+  z-index: 1;
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+  mix-blend-mode: normal;
+  clip-path: circle(0px at 50% 50%);
+  animation: themeReveal 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes themeReveal {
+  from { clip-path: circle(0px at 50% 50%); }
+  to { clip-path: circle(var(--theme-reveal-radius, 150vmax) at 50% 50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+    clip-path: none;
+  }
+}
+
+/* ------------------------------------------------------------------ Modals
+   Referenced from Modal.jsx — the backdrop fades while the dialog itself rises
+   into place. Kept here rather than inline so the names always resolve.
+   ------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPopIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-overlay,
+  .modal-panel {
+    animation: none !important;
+  }
 }
 
 .empty-state-icon {
   width: 56px;
   height: 56px;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto var(--space-5);
   color: var(--primary-blue);
   background: var(--primary-blue-light);
   border-radius: 50%;
@@ -276,6 +591,23 @@ a:hover {
   align-items: center;
   justify-content: center;
   font-size: 1.6rem;
+  animation: emptyStateFloat 3s ease-in-out infinite;
+}
+
+@keyframes emptyStateFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+.empty-state {
+  animation: cardRiseIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .empty-state-icon,
+  .empty-state {
+    animation: none !important;
+  }
 }
 
 .empty-state h3 {
@@ -287,7 +619,9 @@ a:hover {
   margin: 0 auto 1.5rem;
 }
 
-/* Form controls reset */
+/* ---------------------------------------------------------- Form controls
+   Fixed height + one focus ring → labels, inputs and buttons line up in rows.
+   ------------------------------------------------------------------------- */
 input, select, textarea {
   font-family: var(--font-body);
   font-size: 0.92rem;
@@ -295,19 +629,40 @@ input, select, textarea {
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  padding: 0.65rem 0.9rem;
+  padding: 0.6rem 0.9rem;
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
   width: 100%;
 }
 
+input:not([type="checkbox"]):not([type="radio"]),
+select {
+  min-height: var(--control-h);
+}
+
+textarea {
+  line-height: 1.55;
+  resize: vertical;
+}
+
 input:focus, select:focus, textarea:focus {
   border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  box-shadow: var(--focus-ring);
 }
 
 input::placeholder, textarea::placeholder {
   color: var(--text-muted);
+}
+
+input[aria-invalid="true"],
+textarea[aria-invalid="true"],
+select[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
+input[aria-invalid="true"]:focus,
+textarea[aria-invalid="true"]:focus {
+  box-shadow: var(--focus-ring-danger);
 }
 
 label {
@@ -325,9 +680,9 @@ label {
   display: grid;
   grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--filter-panel-width);
   gap: var(--layout-gutter);
-  max-width: 1560px;
+  max-width: var(--container-wide);
   margin: 0 auto;
-  padding: 1.75rem var(--layout-gutter) 3rem;
+  padding: var(--page-pt) var(--layout-gutter) var(--page-pb);
   align-items: start;
 }
 
@@ -343,14 +698,76 @@ label {
   position: sticky;
   top: var(--navbar-offset);
   align-self: start;
-  z-index: 40;
+  z-index: auto;
+  /* Tall sidebar content scrolls inside its own lane; the value is relative
+     to the sticky top so the rail always ends above the footer. */
+  max-height: calc(100vh - var(--navbar-offset) - var(--space-6));
+  max-height: calc(100dvh - var(--navbar-offset) - var(--space-6));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
 }
 
 .layout-filter {
   position: sticky;
   top: var(--navbar-offset);
   align-self: start;
-  z-index: 40;
+  z-index: auto;
+  /* Same dedicated rail for the long filter form: it scrolls inside its lane
+     and releases the page below it, including the footer. */
+  max-height: calc(100vh - var(--navbar-offset) - var(--space-6));
+  max-height: calc(100dvh - var(--navbar-offset) - var(--space-6));
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+}
+
+/* Find Jobs keeps its listings in a locked viewport-height region so the job
+   cards scroll without dragging the page; the sidebar and filter rails above
+   use their own sticky lanes and always release the footer.
+   `dvh` (with a `vh` fallback for older engines) tracks the *visible* viewport,
+   so collapsing mobile browser chrome no longer resizes the locked shell. */
+.portal-scroll-layout {
+  height: calc(100vh - var(--navbar-offset));
+  height: calc(100dvh - var(--navbar-offset));
+  min-height: 0;
+  overflow: hidden;
+}
+
+.portal-scroll-layout .layout-main {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+  scrollbar-gutter: stable;
+}
+
+.portal-scroll-layout .layout-sidebar,
+.portal-scroll-layout .layout-filter {
+  position: relative;
+  top: auto;
+  z-index: auto;
+}
+
+.portal-scroll-layout .layout-sidebar {
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-medium) transparent;
+  border-radius: var(--radius-xl);
+}
+
+.portal-scroll-layout .layout-filter {
+  scrollbar-gutter: stable;
+}
+
+.portal-scroll-layout .layout-filter .filter-panel {
+  min-height: 100%;
+  border-radius: var(--radius-xl);
 }
 
 /* Mobile toolbar shown inside the portal layout (< 1200px) */
@@ -366,6 +783,25 @@ label {
   .layout-dashboard,
   .layout-dashboard.no-sidebar {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .portal-scroll-layout {
+    height: auto;
+    overflow: visible;
+  }
+
+  .portal-scroll-layout .layout-main,
+  .portal-scroll-layout .layout-sidebar,
+  .portal-scroll-layout .layout-filter {
+    height: auto;
+    overflow: visible;
+  }
+
+  /* Return the rails to plain sticky page columns below desktop: max-height is
+     only ever wanted inside the locked desktop scroll shell. */
+  .layout-sidebar,
+  .layout-filter {
+    max-height: none;
   }
 
   .layout-filter {
@@ -387,8 +823,8 @@ label {
   .layout-mobile-bar {
     display: flex;
     gap: 0.6rem;
-    padding: 0.9rem var(--layout-gutter) 0;
-    max-width: 1560px;
+    padding: var(--space-4) var(--layout-gutter) 0;
+    max-width: var(--container-wide);
     margin: 0 auto;
   }
 
@@ -398,7 +834,8 @@ label {
     align-items: center;
     justify-content: center;
     gap: 0.45rem;
-    padding: 0.55rem 1rem;
+    min-height: var(--control-h);
+    padding: 0 var(--space-4);
     font-size: 0.86rem;
     font-weight: 700;
     border-radius: var(--radius-sm);
@@ -417,7 +854,7 @@ label {
   .layout-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.5);
+    background: rgba(9, 13, 32, 0.55);
     backdrop-filter: blur(2px);
     z-index: 90;
   }
@@ -427,9 +864,164 @@ label {
   }
 }
 
-/* Responsive utilities */
-@media (max-width: 768px) {
-  h1 { font-size: 1.85rem; }
-  h2 { font-size: 1.5rem; }
-  .container { padding: 0 1rem; }
+/* ==========================================================================
+   Alignment & utility layer
+   Small, composable helpers so page markup stops carrying ad-hoc spacing and
+   colour values. Everything here reads from the token contract.
+   ========================================================================== */
+
+/* Auth / centered form pages */
+.page-auth {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: var(--space-12) var(--layout-gutter) 5rem;
 }
+
+/* Vertical stacks with a consistent rhythm */
+.stack-2 { display: flex; flex-direction: column; gap: var(--space-2); }
+.stack-3 { display: flex; flex-direction: column; gap: var(--space-3); }
+.stack-4 { display: flex; flex-direction: column; gap: var(--space-4); }
+.stack-5 { display: flex; flex-direction: column; gap: var(--space-5); }
+
+/* Horizontal, wrapping groups — vertically centered by default */
+.cluster {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.cluster-start {
+  align-items: flex-start;
+}
+
+/* Title on the left, actions on the right, always on one optical line */
+.split-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* Inline meta list: "Company • Location • Salary" */
+.meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.meta-row > * {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.meta-sep {
+  color: var(--border-strong);
+}
+
+/* Right-aligned action row (modal footers, card footers) */
+.actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Consistent card grid. `min(320px, 100%)` is what makes this safe: a bare
+   320px track would overflow any viewport narrower than 320px + gutters. */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+  gap: var(--space-5);
+}
+
+/* Small uppercase label above a heading */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Flat tinted panel used inside cards and modals */
+.inset-panel {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+
+.divider {
+  height: 1px;
+  background: var(--border-light);
+  border: 0;
+  margin: var(--space-5) 0;
+}
+
+/* Colour helpers replacing hardcoded hex in JSX */
+.text-success { color: var(--text-success); }
+.text-warning { color: var(--text-warning); }
+.text-danger  { color: var(--text-danger); }
+.text-info    { color: var(--text-info); }
+.text-muted   { color: var(--text-muted); }
+
+/* Square icon tile (stats, empty states, feature lists) */
+.icon-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue-light);
+  color: var(--primary-blue);
+  font-size: 1.35rem;
+}
+
+.icon-tile-sm {
+  width: 40px;
+  height: 40px;
+  font-size: 1.1rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Progress track/fill used in dashboards and assessments */
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--primary-blue);
+  transition: width var(--transition-normal);
+}
+
+/* Responsive alignment rules */
+@media (max-width: 768px) {
+  .page { padding-top: var(--space-8); padding-bottom: var(--space-10); }
+  .container,
+  .container-narrow,
+  .page-narrow { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .page-header-row,
+  .split-row { align-items: flex-start; }
+  .actions-row { justify-content: stretch; }
+  .actions-row .btn { flex: 1; }
+  .grid-auto { grid-template-columns: 1fr; }
+}
+

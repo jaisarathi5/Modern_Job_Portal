@@ -14,8 +14,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.85rem 1.5rem;
-  max-width: 1560px;
+  padding: 0.75rem var(--layout-gutter);
+  max-width: var(--container-wide);
   margin: 0 auto;
   gap: 1.5rem;
 }
@@ -51,7 +51,7 @@
 
 .navbar-search input:focus {
   border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: var(--focus-ring);
   background: var(--bg-card);
 }
 
@@ -81,8 +81,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--control-h-nav);
+  height: var(--control-h-nav);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-medium);
   background: var(--bg-subtle);
@@ -105,7 +105,7 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #f43f5e;
+  background: var(--danger);
   border: 1.5px solid var(--bg-card);
 }
 
@@ -115,8 +115,8 @@
   align-items: center;
   justify-content: center;
   gap: 0.4rem;
-  width: 36px;
-  height: 36px;
+  width: var(--control-h-nav);
+  height: var(--control-h-nav);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-medium);
   background: var(--bg-subtle);
@@ -134,11 +134,11 @@
 }
 
 .theme-icon.sun {
-  color: #f59e0b;
+  color: var(--accent-gold);
 }
 
 .theme-icon.moon {
-  color: #64748b;
+  color: var(--accent-slate);
 }
 
 /* Brand Logo */
@@ -150,18 +150,18 @@
 }
 
 .brand-icon-box {
-  width: 38px;
-  height: 38px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #ffffff;
+  width: var(--control-h-nav);
+  height: var(--control-h-nav);
+  background: var(--gradient-brand);
+  color: var(--on-accent);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
   font-weight: 700;
-  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-brand);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .brand-text-group {
@@ -179,7 +179,7 @@
 }
 
 .brand-title span {
-  color: #2563eb;
+  color: var(--primary-blue);
 }
 
 .brand-subtitle {
@@ -217,8 +217,8 @@
 }
 
 .nav-link.active {
-  color: var(--primary-navy);
-  background-color: var(--bg-subtle);
+  color: var(--primary-blue);
+  background-color: var(--primary-blue-light);
   font-weight: 700;
 }
 
@@ -227,13 +227,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.38rem 0.85rem;
+  min-height: var(--control-h-sm);
+  padding: 0 0.85rem;
   border-radius: var(--radius-full);
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
   border: 1px solid var(--border-medium);
-  background: #FFFFFF;
+  background: var(--bg-card);
   color: var(--text-secondary);
   transition: all var(--transition-fast);
 }
@@ -242,14 +243,14 @@
   background: var(--success-bg);
   border-color: var(--success-border);
   color: var(--success-dark);
-  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.15);
+  box-shadow: var(--shadow-xs);
 }
 
 .fresher-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #cbd5e1;
+  background: var(--border-medium);
 }
 
 .fresher-toggle-pill.active .fresher-dot {
@@ -259,11 +260,11 @@
 
 /* Quick Banner for Presentation Demo Persona Switcher */
 .demo-banner {
-  background: #0f172a;
-  color: #e2e8f0;
+  background: var(--bg-dark);
+  color: var(--footer-text);
   padding: 0.45rem 0;
   font-size: 0.8rem;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .demo-banner-inner {
@@ -281,15 +282,15 @@
 }
 
 .demo-banner-badge {
-  background: #1e293b;
-  color: #93c5fd;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c7d2fe;
   font-weight: 700;
   padding: 0.15rem 0.5rem;
   border-radius: var(--radius-xs);
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border: 1px solid #334155;
+  border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
 .demo-switch-group {
@@ -299,9 +300,9 @@
 }
 
 .demo-switch-btn {
-  background: #1e293b;
-  color: #cbd5e1;
-  border: 1px solid #334155;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--footer-chip-text);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   padding: 0.25rem 0.65rem;
   font-size: 0.76rem;
   border-radius: var(--radius-xs);
@@ -313,9 +314,9 @@
 }
 
 .demo-switch-btn:hover, .demo-switch-btn.active {
-  background: #2563eb;
-  color: #ffffff;
-  border-color: #2563eb;
+  background: var(--primary-blue);
+  color: var(--on-accent);
+  border-color: var(--primary-blue);
   font-weight: 600;
 }
 
@@ -325,6 +326,222 @@
   align-items: center;
   gap: 0.75rem;
   flex-shrink: 0;
+}
+
+/* Consolidated preferences and account menu */
+.settings-menu-wrap {
+  position: relative;
+}
+
+.settings-menu-trigger {
+  position: relative;
+  width: var(--control-h-nav);
+  height: var(--control-h-nav);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.settings-menu-trigger:hover,
+.settings-menu-trigger.active {
+  color: var(--primary-blue);
+  background: var(--bg-card);
+  border-color: var(--primary-blue);
+}
+
+.settings-menu-trigger.active svg {
+  transform: rotate(35deg);
+}
+
+.settings-menu-trigger svg {
+  transition: transform var(--transition-fast);
+}
+
+.settings-active-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 1.5px solid var(--bg-subtle);
+}
+
+.settings-menu {
+  position: absolute;
+  top: calc(100% + 0.7rem);
+  right: 0;
+  width: 250px;
+  padding: 0.55rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 120;
+  animation: settingsMenuIn 140ms ease-out both;
+}
+
+.settings-menu-heading {
+  padding: 0.45rem 0.65rem 0.35rem;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.settings-menu-subheading {
+  padding: 0.55rem 0.65rem 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+/* Site theme swatch row — picks one of the five full palettes from accents.js */
+.settings-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  padding: 0.25rem 0.65rem 0.55rem;
+}
+
+.mobile-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.settings-swatch {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid var(--border-medium);
+  cursor: pointer;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.settings-swatch:hover {
+  transform: scale(1.14);
+  border-color: var(--accent-base);
+}
+
+.settings-swatch.active {
+  transform: scale(1.08);
+  border-color: var(--bg-card);
+  box-shadow: 0 0 0 2px var(--bg-card), 0 0 0 4px var(--accent-base);
+}
+
+.settings-menu-item,
+.settings-menu-account {
+  width: 100%;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.55rem 0.65rem;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.84rem;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.settings-menu-item:hover,
+.settings-menu-account:hover {
+  background: var(--bg-subtle);
+  color: var(--primary-blue);
+}
+
+.settings-menu-icon {
+  width: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.settings-menu-item:hover .settings-menu-icon { color: var(--primary-blue); }
+
+.settings-menu-item strong {
+  color: var(--success-dark);
+  font-size: 0.75rem;
+  margin-left: 0.2rem;
+}
+
+.settings-notification-icon { position: relative; }
+.settings-notification-icon .notification-dot { top: -2px; right: 1px; }
+
+.settings-menu-divider {
+  height: 1px;
+  margin: 0.45rem 0;
+  background: var(--border-light);
+}
+
+.settings-menu-account { gap: 0.55rem; }
+
+.settings-menu-account .user-avatar {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.settings-menu-account span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.settings-menu-account strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-menu-account small {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
+.settings-logout { color: var(--danger); }
+.settings-logout .settings-menu-icon { color: var(--danger); }
+
+.settings-auth-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+  padding: 0.15rem;
+}
+
+.settings-auth-actions .btn {
+  min-height: 36px;
+  padding: 0 0.55rem;
+  font-size: 0.78rem;
+}
+
+@keyframes settingsMenuIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Top-Right Login and Sign Up Buttons */
@@ -342,12 +559,12 @@
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--text-primary);
-  padding: 0.45rem 0.95rem;
+  padding: 0 0.95rem;
   border-radius: var(--radius-sm);
   background-color: transparent;
   border: 1px solid var(--border-medium);
   transition: all var(--transition-fast);
-  height: 38px;
+  height: var(--control-h-nav);
   box-sizing: border-box;
 }
 
@@ -363,28 +580,23 @@
   justify-content: center;
   font-size: 0.88rem;
   font-weight: 700;
-  color: #ffffff !important;
-  padding: 0.48rem 1.15rem;
+  color: var(--on-accent) !important;
+  padding: 0 1.15rem;
   border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  border: 1px solid #0f172a;
+  background: var(--primary-blue);
+  border: 1px solid var(--primary-blue);
   box-shadow: var(--shadow-xs);
   transition: all var(--transition-fast);
-  height: 38px;
+  height: var(--control-h-nav);
   box-sizing: border-box;
 }
 
 .btn-nav-signup:hover {
-  background: #1e293b;
+  background: var(--primary-blue-hover);
+  border-color: var(--primary-blue-hover);
+  color: var(--on-accent) !important;
   transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-[data-theme="dark"] .btn-nav-signup,
-.dark .btn-nav-signup {
-  background: linear-gradient(135deg, #38bdf8 0%, #2563eb 100%);
-  border-color: #38bdf8;
-  color: #0f172a !important;
+  box-shadow: var(--shadow-brand);
 }
 
 .user-badge-group {
@@ -392,10 +604,10 @@
   align-items: center;
   gap: 0.6rem;
   background: var(--bg-subtle);
-  padding: 0.2rem 0.4rem 0.2rem 0.6rem;
+  padding: 0 0.4rem 0 0.6rem;
   border-radius: var(--radius-full);
   border: 1px solid var(--border-light);
-  height: 38px;
+  height: var(--control-h-nav);
   box-sizing: border-box;
 }
 
@@ -406,17 +618,17 @@
 }
 
 .user-avatar {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
-  color: #ffffff;
+  background: var(--gradient-brand);
+  color: var(--on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.82rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  font-size: 0.78rem;
+  box-shadow: var(--shadow-xs);
 }
 
 .user-info {
@@ -481,11 +693,134 @@
   display: flex;
 }
 
+/* ============================================================== Responsive
+   The navbar is one flex row (brand · links · search · actions · burger) with
+   a 1.5rem gap and a `flex-shrink: 0` action cluster. At 360px that row needed
+   roughly 500px, so it pushed the page sideways. The strategy below:
+
+     >= 993px  unchanged desktop bar
+     <= 992px  inline links collapse into the drawer; search drops to its own
+               row so it is never squeezed below a usable width
+     <= 640px  the search field is hidden entirely (the hero/portal search is
+               always present on those pages) and the row shrinks to fit
+     coarse    every control is bumped to a 44px thumb target
+   -------------------------------------------------------------------------- */
+
+/* Respect notches / rounded corners on the bar itself. */
+.navbar-wrapper {
+  padding-left: var(--safe-l);
+  padding-right: var(--safe-r);
+  padding-top: var(--safe-t);
+}
+
+/* `flex-wrap` is deliberately NOT set here: on desktop the row must stay a
+   single line. It is enabled inside the 992px query below, once the inline
+   links have collapsed into the drawer and there is room to wrap. */
+.main-navbar {
+  row-gap: 0.6rem;
+}
+
 @media (max-width: 992px) {
-  .nav-links, .fresher-toggle-pill, .user-info {
+  .main-navbar {
+    flex-wrap: wrap;
+    column-gap: 0.75rem;
+  }
+  .nav-links,
+  .fresher-toggle-pill,
+  .user-info {
     display: none;
   }
+
   .mobile-toggle-btn {
     display: block;
+  }
+
+  /* Search gets the full width of row two instead of competing with the brand
+     and the action cluster for horizontal space. */
+  .navbar-search {
+    order: 10;
+    flex: 1 0 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  /* The brand may shrink; its text truncates rather than overflowing. */
+  .brand-logo {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .brand-text-group {
+    min-width: 0;
+  }
+
+  .brand-title,
+  .brand-subtitle {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+@media (max-width: 640px) {
+  .main-navbar {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  /* Secondary brand line is the first thing to go — it costs horizontal room
+     and repeats what the title already says. */
+  .brand-subtitle {
+    display: none;
+  }
+
+  .brand-title {
+    font-size: 1.15rem;
+  }
+
+  /* The dedicated hero/portal search covers these pages, so the navbar field
+     is redundant here and was the main source of overflow. */
+  .navbar-search {
+    display: none;
+  }
+
+  /* Tighter gaps now that the row is brand + actions + burger only. */
+  .nav-actions {
+    gap: 0.4rem;
+  }
+
+  /* Tighten the action cluster so four 36px controls plus the burger fit a
+     320px screen. */
+  .auth-nav-buttons {
+    gap: 0.4rem;
+  }
+
+  .btn-nav-login,
+  .btn-nav-signup {
+    padding: 0 0.7rem;
+    font-size: 0.82rem;
+  }
+
+  /* The popover is absolutely positioned against its trigger; clamp it to the
+     viewport so it never runs off the right edge. */
+  .settings-menu {
+    width: min(250px, calc(100vw - 2 * var(--layout-gutter)));
+  }
+
+  /* The drawer is now the primary navigation: give it the full width of the
+     bar and let it scroll if the link list is taller than the viewport. */
+  .mobile-nav-drawer {
+    padding: 1rem var(--layout-gutter);
+    gap: 0.5rem;
+    max-height: calc(100dvh - var(--navbar-offset));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-bottom: calc(1rem + var(--safe-b));
+  }
+
+  /* Drawer links read as full-width tappable rows, not inline items. */
+  .mobile-nav-drawer .nav-link {
+    width: 100%;
+    padding: 0.7rem 0.75rem;
   }
 }

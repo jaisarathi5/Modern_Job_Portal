@@ -1,14 +1,31 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
-import { FiUserPlus, FiZap } from 'react-icons/fi';
+import Logo from '../components/common/Logo';
+import { FiUserPlus } from 'react-icons/fi';
 import '../styles/forms.css';
 
 export default function Register() {
   const { register } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // A route guard may have redirected the visitor here: send them back to the
+  // page they originally asked for once a matching role is registered.
+  const resolveDestination = (nextRole) => {
+    const homeRoute = nextRole === 'jobseeker' ? '/dashboard' : '/recruiter';
+    const from = location.state?.from;
+    if (!from) return homeRoute;
+
+    const allowedPrefixes = nextRole === 'jobseeker'
+      ? ['/dashboard', '/applications', '/profile']
+      : ['/recruiter'];
+
+    const isAllowed = allowedPrefixes.some(prefix => from === prefix || from.startsWith(`${prefix}/`));
+    return isAllowed ? from : homeRoute;
+  };
 
   const [role, setRole] = useState('jobseeker');
   const [formData, setFormData] = useState({
@@ -33,38 +50,42 @@ export default function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    register({
+    const result = register({
       ...formData,
       role
     });
+    if (!result.success) {
+      addToast(result.message, 'error');
+      return;
+    }
     addToast(`Account created as ${role === 'jobseeker' ? 'Job Seeker' : 'Recruiter'}!`, 'success');
-    navigate(role === 'jobseeker' ? '/dashboard' : '/recruiter');
+    navigate(resolveDestination(role), { replace: true });
   };
 
   return (
-    <div className="container" style={{ padding: '3.5rem 1.5rem 5rem', maxWidth: '560px' }}>
+    <div className="page-auth">
       <div className="form-card">
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div style={{
             width: '46px',
             height: '46px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-indigo))',
-            color: '#FFFFFF',
+            background: 'var(--gradient-brand)',
+            color: 'var(--on-accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.4rem',
             margin: '0 auto 0.85rem',
-            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+            boxShadow: 'var(--shadow-brand)'
           }}>
-            <FiZap />
+            <Logo variant="icon" size={26} mono />
           </div>
-          <h2 style={{ fontSize: '1.75rem', color: 'var(--primary-navy)', margin: '0 0 0.4rem' }}>
+          <h2 style={{ margin: '0 0 0.4rem' }}>
             Create an Account
           </h2>
           <p style={{ margin: 0, fontSize: '0.9rem' }}>
-            Join SkillBridge to calculate real-time skills alignment and explore top tech hiring
+            Join SkillBridge to calculate real-time skills alignment and explore top hiring
           </p>
         </div>
 

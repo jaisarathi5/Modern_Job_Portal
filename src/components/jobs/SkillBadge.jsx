@@ -2,25 +2,25 @@ import React from 'react';
 import { FiCheck, FiAlertCircle } from 'react-icons/fi';
 
 export default function SkillBadge({ skill, status = 'neutral', onAction, actionLabel }) {
-  let bg = '#F1F5F9';
-  let color = '#334155';
-  let border = '1px solid #E2E8F0';
+  let bg = 'var(--tone-neutral-bg)';
+  let color = 'var(--tone-neutral)';
+  let border = '1px solid var(--tone-neutral-border)';
   let Icon = null;
 
   if (status === 'matched') {
-    bg = '#ECFDF5';
-    color = '#047857';
-    border = '1px solid #A7F3D0';
+    bg = 'var(--tone-success-bg)';
+    color = 'var(--tone-success)';
+    border = '1px solid var(--tone-success-border)';
     Icon = FiCheck;
   } else if (status === 'missing') {
-    bg = '#FEF2F2';
-    color = '#DC2626';
-    border = '1px dashed #FECACA';
+    bg = 'var(--tone-danger-bg)';
+    color = 'var(--tone-danger)';
+    border = '1px dashed var(--tone-danger-border)';
     Icon = FiAlertCircle;
   } else if (status === 'preferred') {
-    bg = '#EEF2FF';
-    color = '#4F46E5';
-    border = '1px solid #C7D2FE';
+    bg = 'var(--tone-indigo-bg)';
+    color = 'var(--tone-indigo)';
+    border = '1px solid var(--tone-indigo-border)';
   }
 
   return (

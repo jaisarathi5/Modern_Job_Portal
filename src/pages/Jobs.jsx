@@ -1,42 +1,41 @@
-import React, { useState } from 'react';
+import React from 'react';
 import SearchBar from '../components/jobs/SearchBar';
 import JobCard from '../components/jobs/JobCard';
 import { useJobs } from '../context/JobContext';
 import { useAuth } from '../context/AuthContext';
 import { FiRotateCcw, FiInbox } from 'react-icons/fi';
+import { JOB_CARD_IMAGES } from '../data/jobCardImages';
+import { getSortOptions } from '../data/jobSortOptions';
 import '../styles/jobs.css';
 
 export default function Jobs() {
-  const { filteredJobs, resetFilters, selectedCategory, selectedSkill } = useJobs();
-  const { isFresherMode } = useAuth();
-  const [sortBy, setSortBy] = useState('match');
-
-  // Sorted jobs
-  const sortedJobs = [...filteredJobs].sort((a, b) => {
-    if (sortBy === 'match') {
-      return (b.matchData?.matchPercentage || 0) - (a.matchData?.matchPercentage || 0);
-    }
-    if (sortBy === 'applicants') {
-      return (a.applicantsCount || 0) - (b.applicantsCount || 0);
-    }
-    return 0; // Default order
-  });
+  // Ordering lives in JobContext so this header, the filter panel and the
+  // rendered list always agree on one sort value.
+  const {
+    filteredJobs,
+    resetFilters,
+    selectedCategory,
+    selectedSkill,
+    sortBy,
+    setSortBy
+  } = useJobs();
+  const { isFresherMode, currentUser } = useAuth();
 
   return (
     <div className="jobs-page">
       {/* Page Header */}
       <div className="jobs-page-header">
         <div className="container">
-          <div style={{ maxWidth: '720px', marginBottom: '1.75rem' }}>
+          <div className="page-header">
             <span className="badge badge-rose" style={{ marginBottom: '0.4rem' }}>
               Verified Tech Positions
             </span>
-            <h1 style={{ fontSize: '2.3rem', marginBottom: '0.4rem', color: 'var(--primary-navy)' }}>
+            <h1 style={{ marginBottom: '0.4rem' }}>
               Explore Jobs with Smart Skill Alignment
             </h1>
             <p>
               Match scores are automatically updated based on your profile skills.
-              Filter by tech stack, domain, or enable Fresher Mode to isolate entry-level openings.
+              Filter by skill, discipline, or enable Fresher Mode to isolate entry-level openings.
             </p>
           </div>
 
@@ -48,10 +47,10 @@ export default function Jobs() {
 
       {/* Main Content Area */}
       <div className="container">
-        <div style={{ padding: '2rem 0 4rem' }}>
+        <div className="page">
           <div className="jobs-results-header">
             <div className="jobs-count-badge">
-              Showing <strong>{sortedJobs.length}</strong> available position{sortedJobs.length === 1 ? '' : 's'}
+              Showing <strong>{filteredJobs.length}</strong> available position{filteredJobs.length === 1 ? '' : 's'}
               {isFresherMode && (
                 <span className="badge badge-fresher" style={{ marginLeft: '0.6rem' }}>
                   🌱 Fresher Mode ON
@@ -85,18 +84,23 @@ export default function Jobs() {
                   background: 'var(--bg-card)'
                 }}
               >
-                <option value="match">Highest Match Score</option>
-                <option value="recent">Most Recent</option>
-                <option value="applicants">Fewest Applicants (Early Apply)</option>
+                {getSortOptions(Boolean(currentUser)).map(option => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
               </select>
             </div>
           </div>
 
           {/* Results Grid or Empty State */}
-          {sortedJobs.length > 0 ? (
+          {filteredJobs.length > 0 ? (
             <div className="jobs-grid">
-              {sortedJobs.map(job => (
-                <JobCard key={job.id} job={job} />
+              {filteredJobs.map((job, index) => (
+                <div key={job.id} style={{ '--i': index % 12 }}>
+                  <JobCard
+                    job={job}
+                    featuredImage={JOB_CARD_IMAGES[index % JOB_CARD_IMAGES.length]}
+                  />
+                </div>
               ))}
             </div>
           ) : (

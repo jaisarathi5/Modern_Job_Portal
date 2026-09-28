@@ -1,22 +1,12 @@
 import React from 'react';
 import { useJobs } from '../../context/JobContext';
 import { useAuth } from '../../context/AuthContext';
-import { FiFilter, FiRotateCcw, FiLayers, FiBriefcase, FiMapPin, FiCode, FiBarChart2, FiDollarSign, FiSmile, FiX } from 'react-icons/fi';
+import { ALL_BRANCHES, getAllCategories, getAllBranchSkills } from '../../data/engineeringBranches';
+import { getSortOptions } from '../../data/jobSortOptions';
+import { FiFilter, FiRotateCcw, FiLayers, FiBriefcase, FiMapPin, FiCode, FiBarChart2, FiDollarSign, FiSmile, FiX, FiCpu } from 'react-icons/fi';
 import '../../styles/filter-panel.css';
 
-const CATEGORIES = [
-  'All',
-  'Frontend Developer',
-  'Backend Developer',
-  'Full Stack Developer',
-  'Data Analyst',
-  'Data Scientist',
-  'AI/ML Intern',
-  'Java Developer',
-  'Python Developer',
-  'UI/UX Designer',
-  'Software Engineer'
-];
+const CATEGORIES = ['All', ...getAllCategories()];
 
 const JOB_TYPES = ['All', 'Full-time', 'Internship / Trainee'];
 
@@ -26,24 +16,12 @@ const EXPERIENCE_LEVELS = ['All', 'Fresher (0 yrs)', '0-2 Years', '2+ Years (Mid
 
 const SALARY_BANDS = ['Any', 'Under ₹6 LPA', '₹6 - 10 LPA', '₹10 - 20 LPA', '₹20 LPA+'];
 
-const POPULAR_SKILLS = [
-  'All',
-  'React',
-  'JavaScript',
-  'Python',
-  'Java',
-  'SQL',
-  'Git',
-  'Node.js',
-  'Docker',
-  'Machine Learning',
-  'Figma',
-  'HTML',
-  'CSS'
-];
+const POPULAR_SKILLS = ['All', ...getAllBranchSkills().slice(0, 24)];
 
 export default function FilterPanel({ open = false, onClose = () => {} }) {
   const {
+    selectedBranch,
+    setSelectedBranch,
     selectedCategory,
     setSelectedCategory,
     selectedWorkType,
@@ -63,7 +41,13 @@ export default function FilterPanel({ open = false, onClose = () => {} }) {
     resetFilters
   } = useJobs();
 
-  const { isFresherMode, toggleFresherMode } = useAuth();
+  const { isFresherMode, toggleFresherMode, currentUser } = useAuth();
+
+  // Footer track shortcuts can pick a skill that is not part of the popular
+  // list; keep it in the dropdown so the select never renders blank.
+  const skillOptions = POPULAR_SKILLS.includes(selectedSkill)
+    ? POPULAR_SKILLS
+    : [...POPULAR_SKILLS, selectedSkill];
 
   return (
     <aside className={`filter-panel ${open ? 'open' : ''}`}>
@@ -99,6 +83,23 @@ export default function FilterPanel({ open = false, onClose = () => {} }) {
           aria-label="Toggle Fresher Mode"
           onClick={(e) => e.stopPropagation()}
         />
+      </div>
+
+      {/* Engineering Branch — adapts catalog to candidate branch */}
+      <div className="filter-group">
+        <label className="filter-label">
+          <FiCpu /> Engineering Branch
+        </label>
+        <select
+          value={selectedBranch}
+          onChange={(e) => setSelectedBranch(e.target.value)}
+          className="filter-select"
+        >
+          <option value="All">All Branches (12 domains)</option>
+          {ALL_BRANCHES.map(b => (
+            <option key={b.id} value={b.id}>{b.label} — {b.short}</option>
+          ))}
+        </select>
       </div>
 
       {/* Job Type */}
@@ -218,7 +219,7 @@ export default function FilterPanel({ open = false, onClose = () => {} }) {
           onChange={(e) => setSelectedSkill(e.target.value)}
           className="filter-select"
         >
-          {POPULAR_SKILLS.map(skill => (
+          {skillOptions.map(skill => (
             <option key={skill} value={skill}>{skill}</option>
           ))}
         </select>
@@ -234,9 +235,9 @@ export default function FilterPanel({ open = false, onClose = () => {} }) {
           onChange={(e) => setSortBy(e.target.value)}
           className="filter-select"
         >
-          <option value="match">🎯 Highest Skill Match %</option>
-          <option value="recent">⏱️ Most Recently Posted</option>
-          <option value="title">🔤 Alphabetical (Title)</option>
+          {getSortOptions(Boolean(currentUser)).map(option => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
         </select>
       </div>
 

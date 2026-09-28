@@ -5,6 +5,7 @@ import { useApplications } from '../context/ApplicationContext';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
 import StatCard from '../components/dashboard/StatCard';
+import BranchIntelligence from '../components/recruiter/BranchIntelligence';
 import ApplicantCard from '../components/recruiter/ApplicantCard';
 import Modal from '../components/common/Modal';
 import { 
@@ -88,24 +89,24 @@ export default function RecruiterDashboard() {
             value={postedJobs.length}
             subtitle="Active on job portal"
             icon={FiBriefcase}
-            color="#2563eb"
-            bg="#eff6ff"
+            color="var(--tone-indigo)"
+            bg="var(--tone-indigo-bg)"
           />
           <StatCard
             title="Total Applications"
             value={totalApplicantsCount}
             subtitle="Candidate submissions"
             icon={FiUsers}
-            color="#4f46e5"
-            bg="#eef2ff"
+            color="var(--tone-blue)"
+            bg="var(--tone-blue-bg)"
           />
           <StatCard
             title="Shortlisted / Offer"
             value={shortlistedCount}
             subtitle="Candidates in pipeline"
             icon={FiCheckCircle}
-            color="#059669"
-            bg="#ecfdf5"
+            color="var(--tone-success)"
+            bg="var(--tone-success-bg)"
           />
         </div>
 
@@ -133,7 +134,7 @@ export default function RecruiterDashboard() {
                       padding: '1.1rem',
                       borderRadius: '10px',
                       border: `2px solid ${isSelected ? 'var(--primary-blue)' : 'var(--border-light)'}`,
-                      backgroundColor: isSelected ? '#eff6ff' : '#FFFFFF',
+                      backgroundColor: isSelected ? 'var(--primary-blue-light)' : 'var(--bg-card)',
                       cursor: 'pointer',
                       transition: 'all 0.15s ease'
                     }}
@@ -156,6 +157,15 @@ export default function RecruiterDashboard() {
                         {job.isFresherFriendly ? '🌱 Fresher Friendly' : 'Experienced'}
                       </span>
                       <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        <Link
+                          to={`/recruiter/edit-job/${job.id}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="btn btn-ghost btn-sm"
+                          style={{ padding: '0.2rem 0.4rem', fontSize: '0.75rem' }}
+                          title="Edit opening"
+                        >
+                          <FiEdit />
+                        </Link>
                         <Link
                           to={`/jobs/${job.id}`}
                           onClick={(e) => e.stopPropagation()}
@@ -201,7 +211,7 @@ export default function RecruiterDashboard() {
 
               {/* Applicant Filter Tabs */}
               <div className="status-filter-pills" style={{ marginBottom: '1.25rem' }}>
-                {['All', 'Applied', 'Shortlisted', 'Interview', 'Selected', 'Rejected'].map(status => (
+                {['All', 'Applied', 'Assessment Completed', 'Shortlisted', 'Interview', 'Selected', 'Rejected'].map(status => (
                   <button
                     key={status}
                     type="button"

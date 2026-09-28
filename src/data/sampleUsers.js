@@ -72,11 +72,19 @@ export const INITIAL_APPLICATIONS = [
     applicantSkills: ['React', 'JavaScript', 'HTML', 'CSS', 'Git', 'SQL'],
     matchPercentage: 85,
     appliedDate: '2026-09-12',
-    status: 'Shortlisted', // Applied, Shortlisted, Interview, Selected, Rejected
+    status: 'Shortlisted', // Applied, Assessment Completed, Shortlisted, Interview, Selected, Rejected
     coverNote: 'Excited about the role! I have built multiple React projects and worked with REST APIs during my university internship.',
+    assessmentScore: 82,
+    roleReadiness: 83,
+    categoryScores: {
+      technical: { category: 'technical', label: 'Technical Core', total: 6, correct: 5, percentage: 83 },
+      quantitative: { category: 'quantitative', label: 'Quantitative Aptitude', total: 3, correct: 2, percentage: 67 },
+      logical: { category: 'logical', label: 'Logical Reasoning', total: 3, correct: 3, percentage: 100 },
+      coding: { category: 'coding', label: 'Coding & Analysis', total: 3, correct: 2, percentage: 67 }
+    },
     timeline: [
-      { status: 'Applied', date: '2026-09-12', note: 'Application submitted successfully' },
-      { status: 'Shortlisted', date: '2026-09-14', note: 'Resume & skills reviewed by campus recruitment team' }
+      { status: 'Applied', date: '2026-09-12', note: 'Application submitted with verified assessment: 82% Assessment Score & 83% Role Readiness' },
+      { status: 'Shortlisted', date: '2026-09-14', note: 'Resume & assessment scores reviewed by campus recruitment team' }
     ]
   },
   {

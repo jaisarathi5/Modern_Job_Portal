@@ -1,0 +1,371 @@
+/* ==========================================================================
+   SkillBridge — Global responsive layer
+
+   Loaded LAST (see main.jsx) so it can override the component stylesheets
+   without any of them having to know about it. Everything in here is
+   deliberately non-destructive: it establishes the constraints the rest of the
+   app was written against, then tightens spacing/type/targets per breakpoint.
+
+   Breakpoints used across the app:
+     1440px  large desktop        1024px  small laptop / large tablet
+      768px  tablet               480px  large phone
+                                   360px  small phone (iPhone SE class)
+   ========================================================================== */
+
+/* ------------------------------------------------------------- Overflow
+   A single unbreakable child (a 340px grid track, a long URL, a wide code
+   block) was enough to make the whole document scroll sideways. Clipping the
+   root stops the sideways scroll; `min-width: 0` below stops the *cause* by
+   letting flex/grid children actually shrink below their content size.
+   -------------------------------------------------------------------------- */
+html {
+  /* Stop iOS Safari from inflating text in landscape and on rotate. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+html,
+body {
+  /* `clip` rather than `hidden`: it contains overflow without turning the
+     root into a scroll container, which would break `position: sticky` on the
+     navbar and the sidebar/filter rails. */
+  overflow-x: clip;
+  max-width: 100%;
+}
+
+/* Long URLs, emails and unbroken skill tags must wrap instead of forcing the
+   page wide. `anywhere` (not `break-word`) so they may break mid-token when a
+   single word exceeds the line. */
+body {
+  overflow-wrap: break-word;
+}
+
+/* Grid and flex children default to min-width:auto, which refuses to shrink
+   below their content — the most common cause of a "responsive" layout still
+   overflowing. */
+.layout-main,
+.layout-sidebar,
+.layout-filter,
+.layout-dashboard > *,
+.hero-copy,
+.hero-grid > *,
+.job-details-layout > *,
+.dashboard-two-col > *,
+.resume-layout > *,
+.assessment-workspace-layout > *,
+.form-row > *,
+.footer-grid > *,
+.stats-container > *,
+.grid-auto > * {
+  min-width: 0;
+}
+
+/* Media never overflows its container. */
+img,
+svg,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+img,
+video,
+canvas {
+  height: auto;
+}
+
+iframe {
+  border: 0;
+}
+
+/* Custom horizontal scrollers: hint momentum on iOS, keep the scrollbar out of
+   the way, and stop the gesture from triggering the browser's back-swipe. */
+.category-scroll,
+.companies-grid,
+.code-snippet-box {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* =========================================================== Touch targets
+   Applied only for genuinely coarse pointers (fingers), so the dense desktop
+   layout is completely unaffected. Purely additive: min-height is used
+   alongside the existing heights, so only the target grows.
+   -------------------------------------------------------------------------- */
+@media (pointer: coarse) {
+  .btn,
+  .btn-sm,
+  .btn-lg,
+  .status-pill-btn,
+  .fresher-toggle-pill,
+  .flag-review-btn,
+  .layout-mobile-btn,
+  .mobile-filter-toggle,
+  .filter-apply-btn,
+  .demo-switch-btn,
+  .settings-menu-item,
+  .settings-menu-account {
+    min-height: var(--touch-target);
+  }
+
+  /* Icon-only round controls keep their shape but grow to a thumb-sized box. */
+  .btn-icon,
+  .notification-btn,
+  .theme-toggle-btn,
+  .settings-menu-trigger,
+  .mobile-toggle-btn,
+  .sidebar-close-btn {
+    min-height: var(--touch-target);
+    width: var(--touch-target);
+    height: var(--touch-target);
+  }
+
+  .navbar-search-clear,
+  .search-clear-btn,
+  .tag-pill button,
+  .btn-logout {
+    min-width: var(--touch-target);
+    min-height: var(--touch-target);
+  }
+
+  /* Tappable rows get vertical padding rather than a fixed height, so a
+     multi-line label still grows instead of clipping. */
+  .nav-link,
+  .sidebar-item,
+  .footer-links a,
+  .status-pill-btn {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+  }
+
+  /* Checkboxes/radios are the classic small-target failure; pad the label so
+     the whole row is tappable without changing the rendered control. */
+  .checkbox-label {
+    padding: 0.45rem 0;
+    min-height: var(--touch-target);
+  }
+}
+
+/* ==================================================== iOS input auto-zoom
+   Safari zooms the viewport when a focused field computes to under 16px. Our
+   inputs sit at 0.92rem (~14.7px), so on iOS every tap on a text field yanked
+   the page in and left the user zoomed. 16px on small screens only, so the
+   desktop scale is untouched.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  input,
+  select,
+  textarea,
+  .tag-input-field,
+  .search-field-input,
+  .navbar-search input {
+    font-size: 16px;
+  }
+
+  /* The clear buttons sit inside the field, so they stay visually small while
+     the field itself grows — overrides the coarse-pointer sizing above. */
+  .navbar-search-clear,
+  .search-clear-btn {
+    min-width: 32px;
+    min-height: 32px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ================================================ Landscape / short viewports
+   A phone held sideways is ~400px tall. The 80vh modal cap, the fixed-offset
+   drawers and the generous page rhythm all crowd or clip at that height, so
+   they are compressed independently of width.
+   -------------------------------------------------------------------------- */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root {
+    --page-pt: 1.25rem;
+    --page-pb: 1.75rem;
+    --section-gap: 1.25rem;
+    --drawer-top: 4.25rem;
+  }
+
+  /* The portal scroll lock is meaningless at this height — release it so the
+     page scrolls normally instead of trapping a ~200px-tall scroll box. */
+  .portal-scroll-layout,
+  .portal-scroll-layout .layout-main {
+    height: auto;
+    overflow: visible;
+  }
+}
+
+/* ============================================================== Modals
+   The dialog is capped at 80vh with a 1.5rem body, which overflows a small
+   phone once the browser chrome is accounted for. Below 640px it becomes a
+   bottom sheet: full width, edge-anchored, and bounded by dvh so it can never
+   grow past the visible viewport.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .modal-overlay {
+    padding: 0.75rem;
+    align-items: flex-end;
+  }
+
+  .modal-panel {
+    max-height: calc(100dvh - 1.5rem);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The scrolling body is the last child (the header is the one above it). */
+  .modal-panel > div:last-child {
+    max-height: none;
+    flex: 1;
+    min-height: 0;
+    padding: 1.15rem;
+  }
+
+  .modal-panel > div:first-child {
+    padding: 1rem 1.15rem;
+    flex-shrink: 0;
+  }
+}
+
+/* ================================================================ Drawers
+   The sidebar and filter panel become fixed floating drawers below 1200px.
+   They now honour the safe-area insets so they are not tucked under a notch
+   or the home indicator.
+   -------------------------------------------------------------------------- */
+@media (max-width: 1199.98px) {
+  .sidebar,
+  .filter-panel {
+    top: var(--drawer-top);
+    bottom: max(var(--drawer-inset), var(--safe-b));
+    max-height: none;
+  }
+
+  .filter-panel {
+    right: max(var(--drawer-inset), var(--safe-r));
+  }
+
+  .sidebar {
+    left: max(var(--drawer-inset), var(--safe-l));
+    width: min(300px, calc(100vw - var(--drawer-inset) * 2));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .filter-panel {
+    width: min(320px, calc(100vw - var(--drawer-inset) * 2));
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar,
+  .filter-panel {
+    top: 4.5rem;
+    width: calc(100vw - 1.5rem);
+  }
+
+  .sidebar {
+    left: 0.75rem;
+  }
+
+  .filter-panel {
+    right: 0.75rem;
+  }
+}
+
+/* ==================================================== Page rhythm on phones
+   The 768px block in global.css only reached .page/.container. This covers the
+   remaining page-level surfaces so no section keeps desktop padding on a
+   360px screen.
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  :root {
+    --page-pt: 1.5rem;
+    --page-pb: 2.5rem;
+    --section-gap: 1.5rem;
+    --card-pad: 1.15rem;
+    --card-pad-sm: 1rem;
+  }
+
+  .page-auth {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+  }
+
+  .empty-state {
+    padding: var(--space-8) var(--space-4);
+  }
+
+  /* Buttons in an action row share the row evenly; with three or more the
+     labels start truncating, so they stack instead. */
+  .actions-row {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .actions-row .btn {
+    width: 100%;
+  }
+
+  .meta-row,
+  .split-row,
+  .page-header-row {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-pt: 1.15rem;
+    --page-pb: 2rem;
+    --card-pad: 1rem;
+  }
+
+  /* Below ~480px a horizontal flex row stops being readable; let the shared
+     header/cluster rows align to the start instead of centring. */
+  .cluster,
+  .page-header-row,
+  .split-row,
+  .jobs-results-header,
+  .dashboard-header,
+  .dashboard-section-header {
+    align-items: flex-start;
+  }
+
+  .jobs-results-header > * {
+    width: 100%;
+  }
+}
+
+/* Very narrow phones (iPhone SE class and older Androids) */
+@media (max-width: 360px) {
+  :root {
+    --layout-gutter: 0.75rem;
+    --card-pad: 0.9rem;
+    --radius-lg: 12px;
+    --radius-xl: 14px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    letter-spacing: 0;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+  }
+}
+
+/* ======================================================== Reduced motion
+   The existing per-component blocks cover animated components; this catches
+   the ones driven by long-running keyframes (marquee, drifting blobs, pulses).
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .stories-marquee-track,
+  .companies-grid,
+  .jobs-page-header::before,
+  .jobs-page-header::after {
+    animation: none !important;
+  }
+}

@@ -1,58 +1,87 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../components/common/Toast';
-import { FiLogIn, FiUserCheck, FiBriefcase, FiZap } from 'react-icons/fi';
+import Logo from '../components/common/Logo';
+import { FiLogIn, FiUserCheck, FiBriefcase } from 'react-icons/fi';
 import '../styles/forms.css';
 
 export default function Login() {
   const { login, switchToStudent, switchToRecruiter } = useAuth();
   const { addToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [role, setRole] = useState('jobseeker'); // 'jobseeker' | 'recruiter'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const redirectNoticeShown = useRef(false);
+
+  // Explain why a guard sent the visitor here, once per mount.
+  useEffect(() => {
+    if (!location.state?.from || redirectNoticeShown.current) return;
+    redirectNoticeShown.current = true;
+    addToast('Please sign in to continue', 'info');
+  }, [location.state, addToast]);
+
+  // A route guard may have redirected the visitor here: send them back to the
+  // page they originally asked for once a matching role is signed in.
+  const resolveDestination = (nextRole) => {
+    const homeRoute = nextRole === 'jobseeker' ? '/dashboard' : '/recruiter';
+    const from = location.state?.from;
+    if (!from) return homeRoute;
+
+    const allowedPrefixes = nextRole === 'jobseeker'
+      ? ['/dashboard', '/applications', '/profile']
+      : ['/recruiter'];
+
+    const isAllowed = allowedPrefixes.some(prefix => from === prefix || from.startsWith(`${prefix}/`));
+    return isAllowed ? from : homeRoute;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    login(email, password, role);
+    const result = login(email, password, role);
+    if (!result.success) {
+      addToast(result.message, 'error');
+      return;
+    }
     addToast(`Signed in as ${role === 'jobseeker' ? 'Job Seeker' : 'Recruiter'}`, 'success');
-    navigate(role === 'jobseeker' ? '/dashboard' : '/recruiter');
+    navigate(resolveDestination(role), { replace: true });
   };
 
   const handleDemoStudent = () => {
     switchToStudent();
     addToast('Logged in as Demo Student (Alex Chen)', 'success');
-    navigate('/dashboard');
+    navigate(resolveDestination('jobseeker'), { replace: true });
   };
 
   const handleDemoRecruiter = () => {
     switchToRecruiter();
     addToast('Logged in as Demo Recruiter (Sarah Miller)', 'success');
-    navigate('/recruiter');
+    navigate(resolveDestination('recruiter'), { replace: true });
   };
 
   return (
-    <div className="container" style={{ padding: '3.5rem 1.5rem 5rem', maxWidth: '520px' }}>
+    <div className="page-auth" style={{ maxWidth: '520px' }}>
       <div className="form-card">
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
           <div style={{
             width: '46px',
             height: '46px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-indigo))',
-            color: '#FFFFFF',
+            background: 'var(--gradient-brand)',
+            color: 'var(--on-accent)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontSize: '1.4rem',
             margin: '0 auto 0.85rem',
-            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+            boxShadow: 'var(--shadow-brand)'
           }}>
-            <FiZap />
+            <Logo variant="icon" size={26} mono />
           </div>
-          <h2 style={{ fontSize: '1.75rem', color: 'var(--primary-navy)', margin: '0 0 0.4rem' }}>
+          <h2 style={{ margin: '0 0 0.4rem' }}>
             Welcome Back
           </h2>
           <p style={{ margin: 0, fontSize: '0.9rem' }}>
@@ -83,7 +112,7 @@ export default function Login() {
             <button
               type="button"
               className="btn btn-outline btn-sm"
-              style={{ justifyContent: 'flex-start', background: '#FFFFFF' }}
+              style={{ justifyContent: 'flex-start', background: 'var(--bg-card)' }}
               onClick={handleDemoStudent}
             >
               <FiUserCheck style={{ color: 'var(--primary-blue)' }} />
@@ -92,7 +121,7 @@ export default function Login() {
             <button
               type="button"
               className="btn btn-outline btn-sm"
-              style={{ justifyContent: 'flex-start', background: '#FFFFFF' }}
+              style={{ justifyContent: 'flex-start', background: 'var(--bg-card)' }}
               onClick={handleDemoRecruiter}
             >
               <FiBriefcase style={{ color: 'var(--primary-blue)' }} />

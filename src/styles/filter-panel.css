@@ -172,17 +172,18 @@
 }
 
 .filter-chip.active {
-  background: var(--primary-charcoal);
-  border-color: var(--primary-charcoal);
-  color: #ffffff;
+  background: var(--primary-navy);
+  border-color: var(--primary-navy);
+  color: var(--on-accent);
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 [data-theme="dark"] .filter-chip.active,
 .dark .filter-chip.active {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 130%);
-  border-color: #2563eb;
+  background: var(--gradient-brand);
+  border-color: transparent;
+  color: var(--on-accent);
 }
 
 /* Location input */
@@ -233,11 +234,12 @@
   justify-content: center;
   gap: 0.45rem;
   margin-top: auto;
-  padding: 0.7rem 1rem;
+  min-height: var(--control-h);
+  padding: 0 var(--space-4);
   border-radius: var(--radius-md);
-  border: 1px solid var(--primary-charcoal);
-  background: var(--primary-charcoal);
-  color: #ffffff;
+  border: 1px solid var(--primary-blue);
+  background: var(--primary-blue);
+  color: var(--on-accent);
   font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
@@ -245,15 +247,17 @@
 }
 
 .filter-apply-btn:hover {
-  background: var(--primary-charcoal-dark);
-  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+  background: var(--primary-blue-hover);
+  border-color: var(--primary-blue-hover);
+  box-shadow: var(--shadow-brand);
   transform: translateY(-1px);
 }
 
 [data-theme="dark"] .filter-apply-btn,
 .dark .filter-apply-btn {
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 130%);
+  background: var(--gradient-brand);
   border-color: transparent;
+  color: var(--on-accent);
 }
 
 /* Mobile drawer behavior */

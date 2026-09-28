@@ -1,22 +1,30 @@
 /* ==========================================================================
    Footer Styles - theme aware (light & dark)
    ========================================================================== */
+/* Footer content anchors the page — it sits above every in-flow decorative
+   layer and sticky rail, but below floating chrome (navbar, drawers, menus,
+   skip link) and transient overlays (modals, toasts). */
 .footer {
-  background-color: var(--primary-charcoal-dark);
-  color: #94a3b8;
+  position: relative;
+  z-index: 55;
+  isolation: isolate;
+  background-color: var(--footer-bg);
+  color: var(--footer-text);
   padding: 3.5rem 0 1.75rem;
+  /* Keep the bottom row clear of the iOS home indicator. */
+  padding-bottom: calc(1.75rem + var(--safe-b));
   margin-top: auto;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--footer-border);
 }
 
 [data-theme="dark"] .footer,
 .dark .footer {
-  background-color: #060911;
+  background-color: var(--footer-bg);
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
   gap: 2rem;
   margin-bottom: 2.5rem;
 }
@@ -29,32 +37,32 @@
 }
 
 .footer-brand-icon {
-  width: 34px;
-  height: 34px;
-  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
-  color: #FFFFFF;
-  border-radius: 8px;
+  width: var(--control-h-nav);
+  height: var(--control-h-nav);
+  background: var(--gradient-brand);
+  color: var(--on-accent);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
 }
 
 .footer-brand-name {
-  color: #FFFFFF;
+  color: var(--footer-heading);
   margin: 0;
   font-size: 1.35rem;
   font-weight: 800;
 }
 
 .footer-brand-name span {
-  color: #38bdf8;
+  color: #a5b4fc;
 }
 
 .footer-brand-desc {
-  color: #94a3b8;
+  color: var(--footer-text);
   font-size: 0.88rem;
-  line-height: 1.6;
+  line-height: 1.65;
   margin-bottom: 1.2rem;
   max-width: 320px;
 }
@@ -69,16 +77,20 @@
   font-size: 0.72rem;
   font-weight: 700;
   padding: 0.2rem 0.6rem;
-  border-radius: 4px;
-  border: 1px solid #334155;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--footer-border);
+  background: var(--footer-chip-bg);
+  color: var(--footer-chip-text);
 }
 
-.badge-blue { background: #1e293b; color: #93c5fd; }
-.badge-green { background: #1e293b; color: #86efac; }
-.badge-yellow { background: #1e293b; color: #fde047; }
+/* Footer chips are scoped so they can never collide with the global status
+   badges (.badge-blue etc.) used inside the app. */
+.footer-badge-blue   { color: #a5b4fc; }
+.footer-badge-green  { color: #6ee7b7; }
+.footer-badge-yellow { color: #fcd34d; }
 
 .footer-col-title {
-  color: #FFFFFF;
+  color: var(--footer-heading);
   margin-bottom: 1rem;
   font-size: 1rem;
   font-weight: 700;
@@ -93,26 +105,26 @@
 }
 
 .footer-links a {
-  color: #cbd5e1;
+  color: var(--footer-link);
   font-size: 0.88rem;
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 .footer-links a:hover {
-  color: #38bdf8;
+  color: #a5b4fc;
 }
 
 .footer-bottom {
   padding-top: 1.35rem;
-  border-top: 1px solid #1e293b;
+  border-top: 1px solid var(--footer-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
   font-size: 0.82rem;
-  color: #64748b;
+  color: var(--footer-muted);
 }
 
 .footer-bottom-links {

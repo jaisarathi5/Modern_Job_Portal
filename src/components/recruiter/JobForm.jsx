@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { ALL_BRANCHES, getBranchById, getBranchForCategory, getAllCategories } from '../../data/engineeringBranches';
 import { FiX, FiPlus, FiCheckCircle } from 'react-icons/fi';
 import '../../styles/forms.css';
 
+const ALL_CATEGORIES = getAllCategories();
+
 export default function JobForm({ initialValues, onSubmit, isEditing = false }) {
   const { currentUser } = useAuth();
+
+  const initialBranch = initialValues?.branch || getBranchForCategory(initialValues?.category)?.id || 'cse-it';
+  const [branchId, setBranchId] = useState(initialBranch);
+  const branchSkills = getBranchById(branchId)?.skills || [];
 
   const [formData, setFormData] = useState({
     title: initialValues?.title || '',
@@ -20,6 +27,26 @@ export default function JobForm({ initialValues, onSubmit, isEditing = false }) 
     requiredSkills: initialValues?.requiredSkills || ['React', 'JavaScript', 'HTML', 'CSS'],
     preferredSkills: initialValues?.preferredSkills || ['Git', 'REST API'],
     benefitsText: initialValues?.benefits?.join('\n') || ''
+  });
+
+  // Assessment Configuration State
+  const [assessmentConfig, setAssessmentConfig] = useState({
+    enabled: initialValues?.assessment?.enabled ?? true,
+    duration: initialValues?.assessment?.duration || 30,
+    totalQuestions: initialValues?.assessment?.totalQuestions || 20,
+    categories: initialValues?.assessment?.categories || {
+      technical: 40,
+      quantitative: 25,
+      logical: 15,
+      coding: 20
+    },
+    difficultyPreset: initialValues?.assessment?.difficulty?.hard >= 40
+      ? 'advanced'
+      : initialValues?.assessment?.difficulty?.easy >= 35
+      ? 'internship'
+      : 'entryLevel',
+    secureMode: Boolean(initialValues?.assessment?.secureMode),
+    sebRequired: Boolean(initialValues?.assessment?.sebRequired)
   });
 
   const [newRequiredSkill, setNewRequiredSkill] = useState('');
@@ -112,11 +139,59 @@ export default function JobForm({ initialValues, onSubmit, isEditing = false }) 
       .map(b => b.trim())
       .filter(Boolean);
 
+    const difficultyMap = {
+      internship: { easy: 40, medium: 50, hard: 10 },
+      entryLevel: { easy: 20, medium: 50, hard: 30 },
+      advanced: { easy: 10, medium: 40, hard: 50 }
+    };
+
+    const assessment = assessmentConfig.enabled
+      ? {
+          enabled: true,
+          duration: Number(assessmentConfig.duration),
+          totalQuestions: Number(assessmentConfig.totalQuestions),
+          categories: {
+            technical: Number(assessmentConfig.categories.technical || 40),
+            quantitative: Number(assessmentConfig.categories.quantitative || 25),
+            logical: Number(assessmentConfig.categories.logical || 15),
+            coding: Number(assessmentConfig.categories.coding || 20)
+          },
+          difficulty: difficultyMap[assessmentConfig.difficultyPreset] || { easy: 20, medium: 50, hard: 30 },
+          targetSkills: formData.requiredSkills,
+          secureMode: Boolean(assessmentConfig.secureMode),
+          sebRequired: Boolean(assessmentConfig.sebRequired)
+        }
+      : {
+          enabled: false
+        };
+
+    // Drop the textarea helper fields so they never leak into the stored job.
+    const jobFields = { ...formData };
+    delete jobFields.responsibilitiesText;
+    delete jobFields.benefitsText;
+
     onSubmit({
-      ...formData,
+      ...jobFields,
+      branch: branchId,
       responsibilities: responsibilities.length > 0 ? responsibilities : ['Collaborate with engineering teammates.'],
-      benefits: benefits.length > 0 ? benefits : ['Comprehensive health and learning benefits.']
+      benefits: benefits.length > 0 ? benefits : ['Comprehensive health and learning benefits.'],
+      assessment
     });
+  };
+
+  const handleBranchChange = (e) => {
+    const next = e.target.value;
+    setBranchId(next);
+    const branch = getBranchById(next);
+    // Adapt role + skills to the branch so jobs/assessments stay branch-aligned
+    if (branch && branch.roles.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        category: branch.roles[0],
+        requiredSkills: branch.skills.slice(0, 4),
+        preferredSkills: branch.skills.slice(4, 7),
+      }));
+    }
   };
 
   return (
@@ -157,21 +232,43 @@ export default function JobForm({ initialValues, onSubmit, isEditing = false }) 
         </div>
       </div>
 
+      {/* Branch selector: adapts role + skills + assessment topics */}
+      <div className="form-row">
+        <div className="form-group">
+          <label className="form-label">Engineering Branch <span className="required">*</span></label>
+          <select value={branchId} onChange={handleBranchChange}>
+            {ALL_BRANCHES.map(b => (
+              <option key={b.id} value={b.id}>{b.label} — {b.description}</option>
+            ))}
+          </select>
+          <span className="form-hint">Role, skills and assessment topics auto-adapt to this branch.</span>
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Suggested {getBranchById(branchId)?.short || ''} Skills</label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+            {branchSkills.slice(0, 8).map(s => (
+              <button
+                key={s}
+                type="button"
+                className="btn btn-sm btn-outline"
+                onClick={() => setFormData(prev => prev.requiredSkills.includes(s) ? prev : { ...prev, requiredSkills: [...prev.requiredSkills, s] })}
+              >
+                + {s}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Row 2: Category, Work Type, Experience */}
       <div className="form-row">
         <div className="form-group">
-          <label className="form-label">Category</label>
+          <label className="form-label">Category / Role</label>
           <select name="category" value={formData.category} onChange={handleChange}>
-            <option value="Frontend Developer">Frontend Developer</option>
-            <option value="Backend Developer">Backend Developer</option>
-            <option value="Full Stack Developer">Full Stack Developer</option>
-            <option value="Data Analyst">Data Analyst</option>
-            <option value="Data Scientist">Data Scientist</option>
-            <option value="AI/ML Intern">AI/ML Intern</option>
-            <option value="Java Developer">Java Developer</option>
-            <option value="Python Developer">Python Developer</option>
-            <option value="UI/UX Designer">UI/UX Designer</option>
-            <option value="Software Engineer">Software Engineer</option>
+            {(getBranchById(branchId)?.roles || ALL_CATEGORIES).map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
           </select>
         </div>
 
@@ -326,6 +423,167 @@ export default function JobForm({ initialValues, onSubmit, isEditing = false }) 
           onChange={handleChange}
           placeholder="Mentorship with staff engineers&#10;Learning & certification allowance&#10;Flexible remote schedule"
         />
+      </div>
+
+      {/* Assessment Engine Configuration Section */}
+      <div style={{
+        marginTop: '2rem',
+        padding: '1.5rem',
+        borderRadius: '12px',
+        border: '2px solid var(--border-medium)',
+        backgroundColor: 'var(--bg-card)'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--primary-navy)' }}>
+              🎯 Company & Role Assessment Engine
+            </h3>
+            <p style={{ margin: '0.2rem 0 0', fontSize: '0.84rem', color: 'var(--text-secondary)' }}>
+              Configure a tailored candidate readiness assessment. The question bank automatically selects relevant questions.
+            </p>
+          </div>
+
+          <label className="checkbox-label" style={{ fontWeight: 700, fontSize: '0.92rem' }}>
+            <input
+              type="checkbox"
+              checked={assessmentConfig.enabled}
+              onChange={(e) => setAssessmentConfig(prev => ({ ...prev, enabled: e.target.checked }))}
+            />
+            <span>Assessment Required: <strong>{assessmentConfig.enabled ? 'Yes' : 'No'}</strong></span>
+          </label>
+        </div>
+
+        {assessmentConfig.enabled && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', borderTop: '1px solid var(--border-light)', paddingTop: '1.25rem' }}>
+            {/* Row 1: Duration & Question Count */}
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Duration</label>
+                <select
+                  value={assessmentConfig.duration}
+                  onChange={(e) => setAssessmentConfig(prev => ({ ...prev, duration: Number(e.target.value) }))}
+                >
+                  <option value={15}>15 Minutes (Quick Screening)</option>
+                  <option value={20}>20 Minutes</option>
+                  <option value={25}>25 Minutes</option>
+                  <option value={30}>30 Minutes (Standard)</option>
+                  <option value={45}>45 Minutes (Comprehensive)</option>
+                  <option value={60}>60 Minutes (Deep Evaluation)</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Total Questions</label>
+                <select
+                  value={assessmentConfig.totalQuestions}
+                  onChange={(e) => setAssessmentConfig(prev => ({ ...prev, totalQuestions: Number(e.target.value) }))}
+                >
+                  <option value={10}>10 Questions</option>
+                  <option value={15}>15 Questions</option>
+                  <option value={20}>20 Questions (Recommended)</option>
+                  <option value={30}>30 Questions</option>
+                  <option value={40}>40 Questions</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Difficulty Distribution</label>
+                <select
+                  value={assessmentConfig.difficultyPreset}
+                  onChange={(e) => setAssessmentConfig(prev => ({ ...prev, difficultyPreset: e.target.value }))}
+                >
+                  <option value="internship">🌱 Internship (Easy: 40%, Med: 50%, Hard: 10%)</option>
+                  <option value="entryLevel">💼 Entry-Level (Easy: 20%, Med: 50%, Hard: 30%)</option>
+                  <option value="advanced">🚀 Advanced (Easy: 10%, Med: 40%, Hard: 50%)</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Row 2: Category Distribution Weights */}
+            <div>
+              <label className="form-label" style={{ marginBottom: '0.4rem' }}>
+                Category Distribution Weights (%)
+              </label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(140px, 100%), 1fr))', gap: '0.75rem' }}>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block' }}>Technical</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={assessmentConfig.categories.technical}
+                    onChange={(e) => setAssessmentConfig(prev => ({
+                      ...prev,
+                      categories: { ...prev.categories, technical: Number(e.target.value) }
+                    }))}
+                  />
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block' }}>Quantitative</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={assessmentConfig.categories.quantitative}
+                    onChange={(e) => setAssessmentConfig(prev => ({
+                      ...prev,
+                      categories: { ...prev.categories, quantitative: Number(e.target.value) }
+                    }))}
+                  />
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block' }}>Logical</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={assessmentConfig.categories.logical}
+                    onChange={(e) => setAssessmentConfig(prev => ({
+                      ...prev,
+                      categories: { ...prev.categories, logical: Number(e.target.value) }
+                    }))}
+                  />
+                </div>
+                <div>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'block' }}>Coding</span>
+                  <input
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={assessmentConfig.categories.coding}
+                    onChange={(e) => setAssessmentConfig(prev => ({
+                      ...prev,
+                      categories: { ...prev.categories, coding: Number(e.target.value) }
+                    }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Row 3: Security & Safe Exam Browser Toggle */}
+            <div style={{
+              background: 'var(--bg-subtle)',
+              padding: '0.85rem 1rem',
+              borderRadius: '8px',
+              border: '1px solid var(--border-light)'
+            }}>
+              <label className="checkbox-label" style={{ fontSize: '0.88rem' }}>
+                <input
+                  type="checkbox"
+                  checked={assessmentConfig.secureMode}
+                  onChange={(e) => setAssessmentConfig(prev => ({
+                    ...prev,
+                    secureMode: e.target.checked,
+                    sebRequired: e.target.checked
+                  }))}
+                />
+                <span>
+                  🛡️ Enable <strong>Safe Exam Browser (SEB) Controlled Mode</strong> (Logs tab blur/focus interruptions & requests fullscreen)
+                </span>
+              </label>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Submit Button */}

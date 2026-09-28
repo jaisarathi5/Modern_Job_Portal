@@ -70,7 +70,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="container container-narrow" style={{ padding: '2.5rem 1.5rem 4rem' }}>
+    <div className="container container-narrow page">
       <div className="form-card">
         <div className="form-header">
           <span className="badge badge-navy" style={{ marginBottom: '0.4rem' }}>
@@ -126,7 +126,7 @@ export default function Profile() {
               onChange={(e) => setNewSkillInput(e.target.value)}
               onKeyDown={handleAddSkill}
               placeholder="Add skill (e.g. TypeScript, AWS, Figma) and press Enter..."
-              style={{ background: '#FFFFFF' }}
+              style={{ background: 'var(--bg-card)' }}
             />
             <button
               type="button"
@@ -150,7 +150,7 @@ export default function Profile() {
                   onClick={() => handleQuickAdd(s)}
                   style={{
                     fontSize: '0.75rem',
-                    background: '#FFFFFF',
+                    background: 'var(--bg-card)',
                     border: '1px solid var(--border-medium)',
                     borderRadius: '999px',
                     padding: '0.2rem 0.55rem',

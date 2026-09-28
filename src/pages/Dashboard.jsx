@@ -83,32 +83,32 @@ export default function Dashboard() {
             value={userApps.length}
             subtitle="Active trackings in pipeline"
             icon={FiSend}
-            color="#2563eb"
-            bg="#eff6ff"
+            color="var(--tone-indigo)"
+            bg="var(--tone-indigo-bg)"
           />
           <StatCard
             title="Shortlisted / Interviews"
             value={shortlistedCount}
             subtitle="Positive recruiter responses"
             icon={FiAward}
-            color="#059669"
-            bg="#ecfdf5"
+            color="var(--tone-success)"
+            bg="var(--tone-success-bg)"
           />
           <StatCard
             title="Average Skill Match"
             value={`${avgMatch}%`}
             subtitle="Across all listed positions"
             icon={FiTrendingUp}
-            color="#4f46e5"
-            bg="#eef2ff"
+            color="var(--tone-blue)"
+            bg="var(--tone-blue-bg)"
           />
           <StatCard
             title="Saved Positions"
             value={savedJobs.length}
             subtitle="Bookmarked for future apply"
             icon={FiBookmark}
-            color="#0891b2"
-            bg="#ecfeff"
+            color="var(--tone-warning)"
+            bg="var(--tone-warning-bg)"
           />
         </div>
 
@@ -130,7 +130,7 @@ export default function Dashboard() {
                 </Link>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.2rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '1.2rem' }}>
                 {topRecommended.map(job => (
                   <JobCard key={job.id} job={job} />
                 ))}
@@ -210,7 +210,7 @@ export default function Dashboard() {
               </div>
 
               {savedJobs.length > 0 ? (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: '1rem' }}>
                   {savedJobs.slice(0, 2).map(job => (
                     <JobCard key={job.id} job={job} />
                   ))}
@@ -233,14 +233,14 @@ export default function Dashboard() {
                   height: '68px',
                   borderRadius: '50%',
                   background: 'linear-gradient(135deg, var(--primary-blue), var(--accent-indigo))',
-                  color: '#FFFFFF',
+                  color: 'var(--on-accent)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '1.75rem',
                   fontWeight: 'bold',
                   margin: '0 auto 0.75rem',
-                  boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
+                  boxShadow: 'var(--shadow-brand)'
                 }}>
                   {currentUser?.name?.charAt(0) || 'S'}
                 </div>
@@ -292,7 +292,7 @@ export default function Dashboard() {
                 </div>
                 <div>
                   <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.76rem' }}>Resume Status</span>
-                  <span style={{ color: '#1B5E20', fontWeight: 600 }}>✓ Uploaded & Indexed</span>
+                  <span style={{ color: 'var(--text-success)', fontWeight: 600 }}>✓ Uploaded & Indexed</span>
                 </div>
               </div>
 

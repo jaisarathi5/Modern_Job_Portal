@@ -17,7 +17,7 @@ export default function PostJob() {
   };
 
   return (
-    <div className="container container-narrow" style={{ padding: '2.5rem 1.5rem 4rem' }}>
+    <div className="container container-narrow page">
       <div style={{ marginBottom: '1.5rem' }}>
         <Link to="/recruiter" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: 'var(--muted-rose)', fontWeight: 600, fontSize: '0.88rem' }}>
           <FiArrowLeft /> Back to Recruiter Dashboard

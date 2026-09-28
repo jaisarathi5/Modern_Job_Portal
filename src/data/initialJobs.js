@@ -27,7 +27,26 @@ export const INITIAL_JOBS = [
       'Annual learning stipend for certifications & tech books',
       'Mentorship program with staff engineers'
     ],
-    applicantsCount: 18
+    applicantsCount: 18,
+    assessment: {
+      enabled: true,
+      duration: 25,
+      totalQuestions: 15,
+      categories: {
+        technical: 40,
+        quantitative: 20,
+        logical: 20,
+        coding: 20
+      },
+      difficulty: {
+        easy: 30,
+        medium: 50,
+        hard: 20
+      },
+      targetSkills: ['JavaScript', 'React', 'HTML', 'CSS', 'Git'],
+      secureMode: false,
+      sebRequired: false
+    }
   },
   {
     id: 'job-2',
@@ -57,7 +76,26 @@ export const INITIAL_JOBS = [
       'Weekly tech talk learning sessions',
       'Generous paid time off'
     ],
-    applicantsCount: 34
+    applicantsCount: 34,
+    assessment: {
+      enabled: true,
+      duration: 30,
+      totalQuestions: 20,
+      categories: {
+        technical: 35,
+        quantitative: 20,
+        logical: 15,
+        coding: 30
+      },
+      difficulty: {
+        easy: 20,
+        medium: 50,
+        hard: 30
+      },
+      targetSkills: ['React', 'Node.js', 'JavaScript', 'SQL', 'Git'],
+      secureMode: true,
+      sebRequired: true
+    }
   },
   {
     id: 'job-3',
@@ -87,7 +125,26 @@ export const INITIAL_JOBS = [
       'Compute credits on high-performance GPU clusters',
       'Certificate of excellence'
     ],
-    applicantsCount: 42
+    applicantsCount: 42,
+    assessment: {
+      enabled: true,
+      duration: 20,
+      totalQuestions: 15,
+      categories: {
+        technical: 40,
+        quantitative: 30,
+        logical: 15,
+        coding: 15
+      },
+      difficulty: {
+        easy: 40,
+        medium: 50,
+        hard: 10
+      },
+      targetSkills: ['Python', 'Machine Learning', 'Data Structures', 'Git'],
+      secureMode: false,
+      sebRequired: false
+    }
   },
   {
     id: 'job-4',
@@ -117,7 +174,26 @@ export const INITIAL_JOBS = [
       'Subsidized gym & fitness club memberships',
       'Commute allowance'
     ],
-    applicantsCount: 15
+    applicantsCount: 15,
+    assessment: {
+      enabled: true,
+      duration: 30,
+      totalQuestions: 20,
+      categories: {
+        technical: 40,
+        quantitative: 20,
+        logical: 15,
+        coding: 25
+      },
+      difficulty: {
+        easy: 20,
+        medium: 50,
+        hard: 30
+      },
+      targetSkills: ['Java', 'SQL', 'REST API', 'Git'],
+      secureMode: false,
+      sebRequired: false
+    }
   },
   {
     id: 'job-5',
@@ -147,7 +223,26 @@ export const INITIAL_JOBS = [
       'Annual team offsite retreats',
       'Gratuity & wellness coverage'
     ],
-    applicantsCount: 27
+    applicantsCount: 27,
+    assessment: {
+      enabled: true,
+      duration: 25,
+      totalQuestions: 15,
+      categories: {
+        technical: 30,
+        quantitative: 35,
+        logical: 20,
+        coding: 15
+      },
+      difficulty: {
+        easy: 30,
+        medium: 50,
+        hard: 20
+      },
+      targetSkills: ['SQL', 'Python', 'Statistics', 'Pandas'],
+      secureMode: false,
+      sebRequired: false
+    }
   },
   {
     id: 'job-6',
@@ -177,7 +272,10 @@ export const INITIAL_JOBS = [
       'Flexible working hours with no micro-management',
       'Quarterly creative design sprints'
     ],
-    applicantsCount: 19
+    applicantsCount: 19,
+    assessment: {
+      enabled: false
+    }
   },
   {
     id: 'job-7',

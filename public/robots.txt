@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Demo-only app: the legal pages are client-rendered too, so there is nothing
+# useful for a crawler to index beyond the landing route.
+Disallow: /recruiter
+Disallow: /dashboard
+Disallow: /applications
+Disallow: /profile

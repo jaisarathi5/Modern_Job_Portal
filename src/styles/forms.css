@@ -3,13 +3,13 @@
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-light);
-  padding: 2.2rem;
+  padding: var(--card-pad);
   box-shadow: var(--shadow-md);
 }
 
 .form-header {
-  margin-bottom: 2rem;
-  padding-bottom: 1.25rem;
+  margin-bottom: var(--space-8);
+  padding-bottom: var(--space-5);
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -30,7 +30,7 @@
 
 .form-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 1.25rem;
 }
 
@@ -72,12 +72,12 @@
   background: var(--bg-card);
   border: 1px solid var(--border-medium);
   border-radius: var(--radius-sm);
-  min-height: 44px;
+  min-height: var(--control-h);
 }
 
 .tags-input-container:focus-within {
   border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: var(--focus-ring);
 }
 
 .tag-pill {

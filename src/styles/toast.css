@@ -1,0 +1,47 @@
+/* Toast enter/exit animation + auto-progress bar.
+   Previously referenced a `slideIn` keyframe that was never defined,
+   so toasts appeared with no motion at all — fixed here. */
+
+.toast-item {
+  position: relative;
+  overflow: hidden;
+  animation: toastIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.toast-item.is-leaving {
+  animation: toastOut 0.28s ease-in forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(24px) scale(0.96); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0) scale(1); max-height: 80px; }
+  to { opacity: 0; transform: translateX(24px) scale(0.96); max-height: 0; margin: 0; padding-top: 0; padding-bottom: 0; }
+}
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.4);
+  animation-name: toastProgress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes toastProgress {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-item,
+  .toast-item.is-leaving,
+  .toast-progress {
+    animation: none !important;
+  }
+}

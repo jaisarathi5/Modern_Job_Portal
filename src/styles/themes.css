@@ -1,0 +1,630 @@
+/* ==========================================================================
+   SkillBridge — Full-site themes
+   --------------------------------------------------------------------------
+   `data-skin` repaints the WHOLE page: surfaces, ink, borders, brand chrome,
+   gradients, the footer and the neutral tone triplets. The older `data-accent`
+   blocks in variables.css only remap brand chrome (buttons/links/tabs), which is
+   why switching an accent leaves the page looking ~90% the same.
+
+   Layering, lowest to highest:
+     :root                          base light tokens (variables.css)
+     [data-theme="dark"]            dark surfaces/ink   (variables.css)
+     [data-skin='<id>']             light palette of that skin      <- this file
+     [data-theme="dark"][data-skin] dark palette of that skin       <- this file
+
+   The skin blocks come later in cascade order and carry equal-or-higher
+   specificity, so they win over the plain :root / [data-theme] values without
+   needing !important.
+
+   Each skin only authors the *primitives* plus the page-wide surface / ink /
+   border tokens. The brand aliases (--primary-blue, --accent-indigo,
+   --muted-rose, --info, --border-active, --gradient-brand, ...) are re-pointed
+   at those primitives by the shared alias block at the bottom of this file, so
+   a skin never has to repeat ~30 legacy names.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Slate — cool blue-grey. The default "professional" look.
+   -------------------------------------------------------------------------- */
+:root[data-skin='slate'] {
+  --accent-base: #334155;
+  --accent-hover: #1e293b;
+  --accent-soft: #e0e7f0;
+  --accent-soft-border: #c3cede;
+  --accent-gradient: linear-gradient(135deg, #334155 0%, #64748b 100%);
+  --accent-ring: 0 0 0 3px rgba(51, 65, 85, 0.24);
+  --accent-shadow: 0 6px 18px -6px rgba(51, 65, 85, 0.5);
+  --on-accent: #ffffff;
+
+  --bg-main: #f1f5f9;
+  --bg-subtle: #e2e8f0;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-inset: #eef2f7;
+  --bg-dark: #1e293b;
+
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #7c8ba1;
+
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-strong: #94a3b8;
+
+  --warm-cream: #e2e8f0;
+  --warm-cream-light: #f1f5f9;
+  --warm-cream-hover: #cbd5e1;
+  --soft-peach: #64748b;
+  --soft-peach-light: #e2e8f0;
+
+  --tone-neutral: #475569;
+  --tone-neutral-bg: #e2e8f0;
+  --tone-neutral-border: #cbd5e1;
+
+  --info: #334155;
+  --info-bg: #e2e8f0;
+  --info-border: #c3cede;
+  --text-info: #1e293b;
+
+  --gradient-hero: linear-gradient(135deg, #1e293b 0%, #334155 55%, #475569 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #334155 0%, #64748b 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #eef2f7 100%);
+
+  --footer-bg: #0f172a;
+  --footer-heading: #ffffff;
+  --footer-text: #b6c2d4;
+  --footer-link: #dbe4f0;
+  --footer-muted: #8595ad;
+  --footer-chip-text: #c3cede;
+}
+
+/* --------------------------------------------------------------------------
+   2. Ocean — teal/cyan, cool and calm.
+   -------------------------------------------------------------------------- */
+:root[data-skin='ocean'] {
+  --accent-base: #0e7490;
+  --accent-hover: #155e75;
+  --accent-soft: #cffafe;
+  --accent-soft-border: #a5e8f2;
+  --accent-gradient: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%);
+  --accent-ring: 0 0 0 3px rgba(14, 116, 144, 0.26);
+  --accent-shadow: 0 6px 18px -6px rgba(14, 116, 144, 0.5);
+  --on-accent: #ffffff;
+
+  --bg-main: #ecfeff;
+  --bg-subtle: #cff5f8;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5feff;
+  --bg-inset: #e4f9fb;
+  --bg-dark: #083344;
+
+  --text-primary: #083344;
+  --text-secondary: #155e75;
+  --text-muted: #5b8b98;
+
+  --border-light: #cbeef3;
+  --border-medium: #a5dfe8;
+  --border-strong: #67c2d0;
+
+  --warm-cream: #cff5f8;
+  --warm-cream-light: #ecfeff;
+  --warm-cream-hover: #a5dfe8;
+  --soft-peach: #0e7490;
+  --soft-peach-light: #cffafe;
+
+  --tone-neutral: #155e75;
+  --tone-neutral-bg: #cff5f8;
+  --tone-neutral-border: #a5dfe8;
+
+  --info: #0e7490;
+  --info-bg: #cffafe;
+  --info-border: #a5e8f2;
+  --text-info: #155e75;
+
+  --gradient-hero: linear-gradient(135deg, #083344 0%, #0e7490 55%, #0891b2 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #0e7490 0%, #22d3ee 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #e4f9fb 100%);
+
+  --footer-bg: #052f3d;
+  --footer-heading: #ffffff;
+  --footer-text: #a5dfe8;
+  --footer-link: #cff5f8;
+  --footer-muted: #6fb3c0;
+  --footer-chip-text: #a5e8f2;
+}
+
+/* --------------------------------------------------------------------------
+   3. Forest — deep green, natural and calm.
+   -------------------------------------------------------------------------- */
+:root[data-skin='forest'] {
+  --accent-base: #166534;
+  --accent-hover: #14532d;
+  --accent-soft: #dcfce7;
+  --accent-soft-border: #bbf7d0;
+  --accent-gradient: linear-gradient(135deg, #166534 0%, #22c55e 100%);
+  --accent-ring: 0 0 0 3px rgba(22, 101, 52, 0.24);
+  --accent-shadow: 0 6px 18px -6px rgba(22, 101, 52, 0.5);
+  --on-accent: #ffffff;
+
+  --bg-main: #f2fbf4;
+  --bg-subtle: #dcfce7;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f7fdf8;
+  --bg-inset: #eaf9ee;
+  --bg-dark: #14532d;
+
+  --text-primary: #14532d;
+  --text-secondary: #166534;
+  --text-muted: #5d8a6b;
+
+  --border-light: #d5efdd;
+  --border-medium: #b7e3c4;
+  --border-strong: #86c79c;
+
+  --warm-cream: #dcfce7;
+  --warm-cream-light: #f2fbf4;
+  --warm-cream-hover: #b7e3c4;
+  --soft-peach: #166534;
+  --soft-peach-light: #dcfce7;
+
+  --tone-neutral: #166534;
+  --tone-neutral-bg: #dcfce7;
+  --tone-neutral-border: #bbf7d0;
+
+  --info: #166534;
+  --info-bg: #dcfce7;
+  --info-border: #bbf7d0;
+  --text-info: #14532d;
+
+  --gradient-hero: linear-gradient(135deg, #14532d 0%, #166534 55%, #15803d 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #166534 0%, #22c55e 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #eaf9ee 100%);
+
+  --footer-bg: #052e16;
+  --footer-heading: #ffffff;
+  --footer-text: #b7e3c4;
+  --footer-link: #dcfce7;
+  --footer-muted: #6da981;
+  --footer-chip-text: #bbf7d0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Blossom — rose/pink, warm and friendly.
+   -------------------------------------------------------------------------- */
+:root[data-skin='blossom'] {
+  --accent-base: #be185d;
+  --accent-hover: #9d174d;
+  --accent-soft: #fce7f3;
+  --accent-soft-border: #fbcfe8;
+  --accent-gradient: linear-gradient(135deg, #be185d 0%, #ec4899 100%);
+  --accent-ring: 0 0 0 3px rgba(190, 24, 93, 0.24);
+  --accent-shadow: 0 6px 18px -6px rgba(190, 24, 93, 0.5);
+  --on-accent: #ffffff;
+
+  --bg-main: #fdf2f8;
+  --bg-subtle: #fce7f3;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fff7fb;
+  --bg-inset: #fceef5;
+  --bg-dark: #831843;
+
+  --text-primary: #831843;
+  --text-secondary: #9d174d;
+  --text-muted: #b0658a;
+
+  --border-light: #fbdcef;
+  --border-medium: #f5bcd9;
+  --border-strong: #ee8cbf;
+
+  --warm-cream: #fce7f3;
+  --warm-cream-light: #fdf2f8;
+  --warm-cream-hover: #f5bcd9;
+  --soft-peach: #be185d;
+  --soft-peach-light: #fce7f3;
+
+  --tone-neutral: #9d174d;
+  --tone-neutral-bg: #fce7f3;
+  --tone-neutral-border: #fbcfe8;
+
+  --info: #be185d;
+  --info-bg: #fce7f3;
+  --info-border: #fbcfe8;
+  --text-info: #9d174d;
+
+  --gradient-hero: linear-gradient(135deg, #831843 0%, #be185d 55%, #db2777 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #be185d 0%, #ec4899 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #fceef5 100%);
+
+  --footer-bg: #500724;
+  --footer-heading: #ffffff;
+  --footer-text: #f5bcd9;
+  --footer-link: #fce7f3;
+  --footer-muted: #c9739e;
+  --footer-chip-text: #fbcfe8;
+}
+
+/* --------------------------------------------------------------------------
+   5. Ember — amber/orange, energetic and warm.
+   -------------------------------------------------------------------------- */
+:root[data-skin='ember'] {
+  --accent-base: #c2410c;
+  --accent-hover: #9a3412;
+  --accent-soft: #ffedd5;
+  --accent-soft-border: #fed7aa;
+  --accent-gradient: linear-gradient(135deg, #c2410c 0%, #f97316 100%);
+  --accent-ring: 0 0 0 3px rgba(194, 65, 12, 0.24);
+  --accent-shadow: 0 6px 18px -6px rgba(194, 65, 12, 0.5);
+  --on-accent: #ffffff;
+
+  --bg-main: #fff8f1;
+  --bg-subtle: #ffedd5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fffbf5;
+  --bg-inset: #fef4e8;
+  --bg-dark: #7c2d12;
+
+  --text-primary: #7c2d12;
+  --text-secondary: #9a3412;
+  --text-muted: #a87052;
+
+  --border-light: #fde8d2;
+  --border-medium: #f8cfa6;
+  --border-strong: #f0a874;
+
+  --warm-cream: #ffedd5;
+  --warm-cream-light: #fff8f1;
+  --warm-cream-hover: #f8cfa6;
+  --soft-peach: #c2410c;
+  --soft-peach-light: #ffedd5;
+
+  --tone-neutral: #9a3412;
+  --tone-neutral-bg: #ffedd5;
+  --tone-neutral-border: #fed7aa;
+
+  --info: #c2410c;
+  --info-bg: #ffedd5;
+  --info-border: #fed7aa;
+  --text-info: #9a3412;
+
+  --gradient-hero: linear-gradient(135deg, #7c2d12 0%, #c2410c 55%, #ea580c 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #c2410c 0%, #f97316 100%);
+  --gradient-surface: linear-gradient(180deg, #ffffff 0%, #fef4e8 100%);
+
+  --footer-bg: #431407;
+  --footer-heading: #ffffff;
+  --footer-text: #f8cfa6;
+  --footer-link: #ffedd5;
+  --footer-muted: #b4794f;
+  --footer-chip-text: #fed7aa;
+}
+
+/* ==========================================================================
+   Dark variants — deeper surfaces, lighter brand tints. `--on-accent` flips to
+   deep ink because the brand colour becomes a light tint that white text would
+   fail contrast against.
+   ========================================================================== */
+:root[data-theme='dark'][data-skin='slate'],
+:root.dark[data-skin='slate'] {
+  --on-accent: #0b1220;
+  --accent-base: #94a3b8;
+  --accent-hover: #cbd5e1;
+  --accent-soft: #293548;
+  --accent-soft-border: #3d4b63;
+  --accent-gradient: linear-gradient(135deg, #475569 0%, #94a3b8 100%);
+  --accent-ring: 0 0 0 3px rgba(148, 163, 184, 0.3);
+  --accent-shadow: 0 6px 18px -6px rgba(100, 116, 139, 0.55);
+
+  --bg-main: #0f172a;
+  --bg-subtle: #1e293b;
+  --bg-card: #1b2637;
+  --bg-card-hover: #253247;
+  --bg-inset: #162032;
+  --bg-dark: #080d18;
+
+  --text-primary: #e8eef7;
+  --text-secondary: #b8c4d6;
+  --text-muted: #8a99b0;
+
+  --border-light: #263349;
+  --border-medium: #33425c;
+  --border-strong: #4a5b78;
+
+  --warm-cream: #1e293b;
+  --warm-cream-light: #162032;
+  --warm-cream-hover: #2b3a52;
+  --soft-peach: #94a3b8;
+  --soft-peach-light: #293548;
+
+  --tone-neutral: #b8c4d6;
+  --tone-neutral-bg: #1e293b;
+  --tone-neutral-border: #33425c;
+
+  --info: #94a3b8;
+  --info-bg: #1e293b;
+  --info-border: #3d4b63;
+  --text-info: #cbd5e1;
+
+  --gradient-hero: linear-gradient(135deg, #0b1220 0%, #1e293b 55%, #334155 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+  --gradient-surface: linear-gradient(180deg, #1b2637 0%, #131c2b 100%);
+
+  --footer-bg: #080d18;
+  --footer-heading: #f1f5f9;
+  --footer-text: #a8b6ca;
+  --footer-link: #cbd5e1;
+  --footer-muted: #74839a;
+  --footer-chip-text: #94a3b8;
+}
+
+:root[data-theme='dark'][data-skin='ocean'],
+:root.dark[data-skin='ocean'] {
+  --on-accent: #04252e;
+  --accent-base: #67e8f9;
+  --accent-hover: #a5f3fc;
+  --accent-soft: #0b3d4a;
+  --accent-soft-border: #14586a;
+  --accent-gradient: linear-gradient(135deg, #0e7490 0%, #67e8f9 100%);
+  --accent-ring: 0 0 0 3px rgba(103, 232, 249, 0.3);
+  --accent-shadow: 0 6px 18px -6px rgba(34, 211, 238, 0.5);
+
+  --bg-main: #04252e;
+  --bg-subtle: #0b3d4a;
+  --bg-card: #0c313d;
+  --bg-card-hover: #12414f;
+  --bg-inset: #072a34;
+  --bg-dark: #021a20;
+
+  --text-primary: #e0fbff;
+  --text-secondary: #a5e8f2;
+  --text-muted: #6ea9b8;
+
+  --border-light: #0f4553;
+  --border-medium: #16606f;
+  --border-strong: #22808f;
+
+  --warm-cream: #0b3d4a;
+  --warm-cream-light: #072a34;
+  --warm-cream-hover: #134b5a;
+  --soft-peach: #67e8f9;
+  --soft-peach-light: #0b3d4a;
+
+  --tone-neutral: #a5e8f2;
+  --tone-neutral-bg: #0b3d4a;
+  --tone-neutral-border: #16606f;
+
+  --info: #67e8f9;
+  --info-bg: #0b3d4a;
+  --info-border: #14586a;
+  --text-info: #a5f3fc;
+
+  --gradient-hero: linear-gradient(135deg, #021a20 0%, #0b3d4a 55%, #0e7490 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #0e7490 0%, #67e8f9 100%);
+  --gradient-surface: linear-gradient(180deg, #0c313d 0%, #072a34 100%);
+
+  --footer-bg: #021a20;
+  --footer-heading: #e0fbff;
+  --footer-text: #8ecad6;
+  --footer-link: #a5e8f2;
+  --footer-muted: #5b8b98;
+  --footer-chip-text: #a5e8f2;
+}
+
+:root[data-theme='dark'][data-skin='forest'],
+:root.dark[data-skin='forest'] {
+  --on-accent: #052e16;
+  --accent-base: #86efac;
+  --accent-hover: #bbf7d0;
+  --accent-soft: #14532d;
+  --accent-soft-border: #1d6b3c;
+  --accent-gradient: linear-gradient(135deg, #166534 0%, #86efac 100%);
+  --accent-ring: 0 0 0 3px rgba(134, 239, 172, 0.3);
+  --accent-shadow: 0 6px 18px -6px rgba(34, 197, 94, 0.5);
+
+  --bg-main: #052e16;
+  --bg-subtle: #14532d;
+  --bg-card: #0d3d22;
+  --bg-card-hover: #134c2b;
+  --bg-inset: #08331b;
+  --bg-dark: #031f0f;
+
+  --text-primary: #e8fbee;
+  --text-secondary: #b7e3c4;
+  --text-muted: #6da981;
+
+  --border-light: #14532d;
+  --border-medium: #1d6b3c;
+  --border-strong: #2d8b4f;
+
+  --warm-cream: #14532d;
+  --warm-cream-light: #08331b;
+  --warm-cream-hover: #1a6237;
+  --soft-peach: #86efac;
+  --soft-peach-light: #14532d;
+
+  --tone-neutral: #b7e3c4;
+  --tone-neutral-bg: #14532d;
+  --tone-neutral-border: #1d6b3c;
+
+  --info: #86efac;
+  --info-bg: #14532d;
+  --info-border: #1d6b3c;
+  --text-info: #bbf7d0;
+
+  --gradient-hero: linear-gradient(135deg, #031f0f 0%, #14532d 55%, #166534 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #166534 0%, #86efac 100%);
+  --gradient-surface: linear-gradient(180deg, #0d3d22 0%, #08331b 100%);
+
+  --footer-bg: #031f0f;
+  --footer-heading: #e8fbee;
+  --footer-text: #a3d4b2;
+  --footer-link: #dcfce7;
+  --footer-muted: #5d8a6b;
+  --footer-chip-text: #bbf7d0;
+}
+
+:root[data-theme='dark'][data-skin='blossom'],
+:root.dark[data-skin='blossom'] {
+  --on-accent: #4a051f;
+  --accent-base: #f9a8d4;
+  --accent-hover: #fbcfe8;
+  --accent-soft: #831843;
+  --accent-soft-border: #a11a58;
+  --accent-gradient: linear-gradient(135deg, #be185d 0%, #f9a8d4 100%);
+  --accent-ring: 0 0 0 3px rgba(249, 168, 212, 0.3);
+  --accent-shadow: 0 6px 18px -6px rgba(236, 72, 153, 0.5);
+
+  --bg-main: #2b0512;
+  --bg-subtle: #500724;
+  --bg-card: #3d0a1e;
+  --bg-card-hover: #4d0d28;
+  --bg-inset: #340717;
+  --bg-dark: #1c030c;
+
+  --text-primary: #fde7f3;
+  --text-secondary: #f5bcd9;
+  --text-muted: #c9739e;
+
+  --border-light: #500724;
+  --border-medium: #6d0a35;
+  --border-strong: #8f1149;
+
+  --warm-cream: #500724;
+  --warm-cream-light: #340717;
+  --warm-cream-hover: #65092f;
+  --soft-peach: #f9a8d4;
+  --soft-peach-light: #500724;
+
+  --tone-neutral: #f5bcd9;
+  --tone-neutral-bg: #500724;
+  --tone-neutral-border: #6d0a35;
+
+  --info: #f9a8d4;
+  --info-bg: #500724;
+  --info-border: #6d0a35;
+  --text-info: #fbcfe8;
+
+  --gradient-hero: linear-gradient(135deg, #1c030c 0%, #500724 55%, #831843 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #be185d 0%, #f9a8d4 100%);
+  --gradient-surface: linear-gradient(180deg, #3d0a1e 0%, #340717 100%);
+
+  --footer-bg: #1c030c;
+  --footer-heading: #fde7f3;
+  --footer-text: #d99ab9;
+  --footer-link: #fce7f3;
+  --footer-muted: #a34a72;
+  --footer-chip-text: #fbcfe8;
+}
+
+:root[data-theme='dark'][data-skin='ember'],
+:root.dark[data-skin='ember'] {
+  --on-accent: #431407;
+  --accent-base: #fdba74;
+  --accent-hover: #fed7aa;
+  --accent-soft: #7c2d12;
+  --accent-soft-border: #9a3412;
+  --accent-gradient: linear-gradient(135deg, #c2410c 0%, #fdba74 100%);
+  --accent-ring: 0 0 0 3px rgba(253, 186, 116, 0.3);
+  --accent-shadow: 0 6px 18px -6px rgba(249, 115, 22, 0.5);
+
+  --bg-main: #2b1005;
+  --bg-subtle: #431407;
+  --bg-card: #3d170a;
+  --bg-card-hover: #4d1d0d;
+  --bg-inset: #331306;
+  --bg-dark: #1a0903;
+
+  --text-primary: #fdeadd;
+  --text-secondary: #f8cfa6;
+  --text-muted: #b4794f;
+
+  --border-light: #431407;
+  --border-medium: #5c1d0a;
+  --border-strong: #7c2d12;
+
+  --warm-cream: #431407;
+  --warm-cream-light: #331306;
+  --warm-cream-hover: #571c0a;
+  --soft-peach: #fdba74;
+  --soft-peach-light: #431407;
+
+  --tone-neutral: #f8cfa6;
+  --tone-neutral-bg: #431407;
+  --tone-neutral-border: #5c1d0a;
+
+  --info: #fdba74;
+  --info-bg: #431407;
+  --info-border: #5c1d0a;
+  --text-info: #fed7aa;
+
+  --gradient-hero: linear-gradient(135deg, #1a0903 0%, #431407 55%, #7c2d12 100%);
+  --gradient-hero-soft: linear-gradient(135deg, #c2410c 0%, #fdba74 100%);
+  --gradient-surface: linear-gradient(180deg, #3d170a 0%, #331306 100%);
+
+  --footer-bg: #1a0903;
+  --footer-heading: #fdeadd;
+  --footer-text: #dfa87c;
+  --footer-link: #ffedd5;
+  --footer-muted: #9c5c33;
+  --footer-chip-text: #fed7aa;
+}
+
+/* ==========================================================================
+   Brand-alias re-pointing. Every skin only authors the primitives above; this
+   block maps them onto the legacy alias names the components actually read, so
+   all ~30 of them follow the active skin for free.
+
+   Declared for `[data-skin]` (not `:root`) so it only applies when a skin is
+   active, leaving the variables.css accent system authoritative otherwise.
+
+   Deliberately NOT scoped to a colour scheme: the dark skin blocks above
+   redefine the same primitives, so these aliases re-resolve to the dark tints
+   automatically. Because this block comes last in the file it also wins over the
+   per-skin light blocks for the *alias* names only — which is what we want,
+   since it just forwards to whichever primitive set is active.
+   ========================================================================== */
+:root[data-skin] {
+  --primary-blue: var(--accent-base);
+  --primary-blue-hover: var(--accent-hover);
+  --primary-blue-light: var(--accent-soft);
+  --primary-blue-dark: var(--accent-hover);
+
+  --primary-navy: var(--accent-base);
+  --primary-navy-hover: var(--accent-hover);
+  --primary-navy-light: var(--accent-soft);
+
+  --primary-charcoal: var(--accent-base);
+  --primary-charcoal-dark: var(--accent-hover);
+  --primary-charcoal-light: var(--accent-hover);
+
+  --primary-wine: var(--accent-base);
+  --primary-wine-hover: var(--accent-hover);
+  --primary-wine-light: var(--accent-soft);
+
+  --muted-rose: var(--accent-base);
+  --muted-rose-hover: var(--accent-hover);
+  --muted-rose-light: var(--accent-soft);
+
+  --accent-rose: var(--accent-base);
+  --accent-rose-light: var(--accent-soft);
+
+  --accent-indigo: var(--accent-base);
+  --accent-indigo-hover: var(--accent-hover);
+  --accent-indigo-light: var(--accent-soft);
+
+  --accent-wine: var(--accent-base);
+  --accent-wine-hover: var(--accent-hover);
+  --accent-wine-light: var(--accent-soft);
+
+  --accent-maroon: var(--accent-hover);
+  --accent-purple: var(--accent-base);
+  --accent-purple-light: var(--accent-soft);
+
+  --accent-violet: var(--accent-base);
+  --accent-violet-hover: var(--accent-hover);
+  --accent-violet-light: var(--accent-soft);
+
+  --border-active: var(--accent-base);
+  --gradient-brand: var(--accent-gradient);
+  --shadow-brand: var(--accent-shadow);
+  --focus-ring: var(--accent-ring);
+}

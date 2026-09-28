@@ -1,73 +1,87 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { FiCheckCircle, FiAlertCircle, FiInfo, FiX } from 'react-icons/fi';
+import '../../styles/toast.css';
 
 const ToastContext = createContext();
+
+const EXIT_DURATION = 280; // ms — must match .toast-item.is-leaving animation duration
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = useCallback((message, type = 'success', duration = 3500) => {
-    const id = Date.now();
-    setToasts(prev => [...prev, { id, message, type }]);
-
+  const removeToast = useCallback((id) => {
+    // Mark as leaving first so the exit animation can play, then actually remove.
+    setToasts(prev => prev.map(t => (t.id === id ? { ...t, leaving: true } : t)));
     setTimeout(() => {
       setToasts(prev => prev.filter(t => t.id !== id));
-    }, duration);
+    }, EXIT_DURATION);
   }, []);
 
-  const removeToast = (id) => {
-    setToasts(prev => prev.filter(t => t.id !== id));
-  };
+  const addToast = useCallback((message, type = 'success', duration = 3500) => {
+    const id = Date.now() + Math.random();
+    setToasts(prev => [...prev, { id, message, type, duration, leaving: false }]);
+
+    setTimeout(() => {
+      removeToast(id);
+    }, duration);
+  }, [removeToast]);
 
   return (
     <ToastContext.Provider value={{ addToast }}>
       {children}
-      <div style={{
-        position: 'fixed',
-        bottom: '1.5rem',
-        right: '1.5rem',
-        zIndex: 9999,
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '0.6rem',
-        maxWidth: '380px'
-      }}>
+      <div
+        aria-live="polite"
+        aria-atomic="false"
+        style={{
+          position: 'fixed',
+          bottom: '1.5rem',
+          right: '1.5rem',
+          zIndex: 9999,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '0.6rem',
+          maxWidth: '380px'
+        }}
+      >
         {toasts.map(toast => {
-          let bg = '#0f172a';
-          let border = '#10b981';
+          let bg = '#141a34';
+          let border = '#34d399';
           let iconColor = '#34d399';
           let Icon = FiCheckCircle;
 
           if (toast.type === 'error') {
-            border = '#ef4444';
+            border = '#f87171';
             iconColor = '#f87171';
             Icon = FiAlertCircle;
           } else if (toast.type === 'info') {
-            border = '#3b82f6';
-            iconColor = '#60a5fa';
+            border = '#818cf8';
+            iconColor = '#a5b4fc';
             Icon = FiInfo;
           }
 
           return (
             <div
               key={toast.id}
+              className={`toast-item${toast.leaving ? ' is-leaving' : ''}`}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.75rem',
                 background: bg,
-                color: '#FFFFFF',
+                color: 'var(--on-accent)',
                 padding: '0.85rem 1.1rem',
                 borderRadius: '10px',
                 borderLeft: `5px solid ${border}`,
                 boxShadow: '0 8px 24px rgba(0, 0, 0, 0.25)',
-                fontSize: '0.9rem',
-                animation: 'slideIn 0.2s ease-out'
+                fontSize: '0.9rem'
               }}
             >
               <Icon style={{ flexShrink: 0, fontSize: '1.2rem', color: iconColor }} />
-              <span style={{ flex: 1 }}>{toast.message}</span>
+              {/* Toast background is always the same dark navy, so the text
+                  stays white regardless of the active accent. */}
+              <span style={{ flex: 1, color: '#ffffff' }}>{toast.message}</span>
               <button
+                type="button"
                 onClick={() => removeToast(toast.id)}
                 style={{
                   background: 'none',
@@ -81,6 +95,18 @@ export function ToastProvider({ children }) {
               >
                 <FiX />
               </button>
+              {!toast.leaving && (
+                <span
+                  className="toast-progress"
+                  style={{
+                    width: `calc(100% - ${5}px)`,
+                    left: '5px',
+                    backgroundColor: iconColor,
+                    opacity: 0.5,
+                    animationDuration: `${toast.duration}ms`
+                  }}
+                />
+              )}
             </div>
           );
         })}

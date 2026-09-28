@@ -8,17 +8,17 @@ export default function SkillGap({ missingSkills = [] }) {
   if (missingSkills.length === 0) {
     return (
       <div style={{
-        background: '#f0fdf4',
-        border: '1px solid #bbf7d0',
+        background: 'var(--success-bg)',
+        border: '1px solid var(--success-border)',
         borderRadius: '16px',
         padding: '1.5rem',
         marginTop: '1.5rem'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: '#166534' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--text-success)' }}>
           <FiCompass style={{ fontSize: '1.3rem' }} />
-          <h4 style={{ margin: 0, color: '#166534', fontSize: '1.1rem' }}>Skill Gap Analysis: Zero Gap</h4>
+          <h4 style={{ margin: 0, color: 'var(--text-success)', fontSize: '1.1rem' }}>Skill Gap Analysis: Zero Gap</h4>
         </div>
-        <p style={{ margin: '0.5rem 0 0', color: '#14532d', fontSize: '0.92rem' }}>
+        <p style={{ margin: '0.5rem 0 0', color: 'var(--text-success)', fontSize: '0.92rem' }}>
           {analysis.summary} You have the primary technical toolkit expected by the hiring team.
         </p>
       </div>
@@ -27,7 +27,7 @@ export default function SkillGap({ missingSkills = [] }) {
 
   return (
     <div style={{
-      background: '#f8fafc',
+      background: 'var(--bg-subtle)',
       border: '1px solid var(--border-light)',
       borderRadius: '16px',
       padding: '1.75rem',
@@ -40,7 +40,7 @@ export default function SkillGap({ missingSkills = [] }) {
           height: '32px',
           borderRadius: '8px',
           backgroundColor: 'var(--primary-blue)',
-          color: '#FFFFFF',
+          color: 'var(--on-accent)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -68,7 +68,7 @@ export default function SkillGap({ missingSkills = [] }) {
           <div
             key={idx}
             style={{
-              background: '#FFFFFF',
+              background: 'var(--bg-card)',
               border: '1px solid var(--border-light)',
               borderRadius: '12px',
               padding: '1rem 1.25rem',
@@ -81,7 +81,7 @@ export default function SkillGap({ missingSkills = [] }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                 <span style={{
                   background: 'var(--primary-blue)',
-                  color: '#FFFFFF',
+                  color: 'var(--on-accent)',
                   width: '22px',
                   height: '22px',
                   borderRadius: '50%',

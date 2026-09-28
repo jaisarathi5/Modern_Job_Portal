@@ -25,7 +25,7 @@ export default function SkillMatch({ matchData, jobTitle }) {
 
   return (
     <div style={{
-      background: '#FFFFFF',
+      background: 'var(--bg-card)',
       border: '1px solid var(--border-light)',
       borderRadius: '16px',
       padding: '1.75rem',
@@ -63,20 +63,20 @@ export default function SkillMatch({ matchData, jobTitle }) {
       {/* Skills Comparison Breakdown */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))',
         gap: '1.5rem',
         marginTop: '1.25rem'
       }}>
         {/* Matching Skills */}
         <div style={{
-          background: '#f0fdf4',
-          border: '1px solid #bbf7d0',
+          background: 'var(--success-bg)',
+          border: '1px solid var(--success-border)',
           borderRadius: '12px',
           padding: '1.2rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.75rem', color: '#166534' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.75rem', color: 'var(--text-success)' }}>
             <FiCheckCircle style={{ fontSize: '1.1rem' }} />
-            <h4 style={{ margin: 0, fontSize: '1rem', color: '#166534' }}>
+            <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-success)' }}>
               Matching Skills ({matchingSkills.length})
             </h4>
           </div>
@@ -90,7 +90,7 @@ export default function SkillMatch({ matchData, jobTitle }) {
               ))}
             </div>
           ) : (
-            <p style={{ fontSize: '0.85rem', color: '#991b1b', margin: 0 }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-danger)', margin: 0 }}>
               None of your profile skills currently match this job's core requirements.
             </p>
           )}
@@ -98,14 +98,14 @@ export default function SkillMatch({ matchData, jobTitle }) {
 
         {/* Missing Skills */}
         <div style={{
-          background: '#f8fafc',
-          border: '1px solid #e2e8f0',
+          background: 'var(--bg-subtle)',
+          border: '1px solid var(--border-light)',
           borderRadius: '12px',
           padding: '1.2rem'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.75rem', color: '#b45309' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', marginBottom: '0.75rem', color: 'var(--text-warning)' }}>
             <FiAlertTriangle style={{ fontSize: '1.1rem' }} />
-            <h4 style={{ margin: 0, fontSize: '1rem', color: '#b45309' }}>
+            <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-warning)' }}>
               Missing Skills ({missingSkills.length})
             </h4>
           </div>
@@ -129,7 +129,7 @@ export default function SkillMatch({ matchData, jobTitle }) {
               )}
             </div>
           ) : (
-            <p style={{ fontSize: '0.85rem', color: '#155724', margin: 0, fontWeight: 600 }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-success)', margin: 0, fontWeight: 600 }}>
               🎉 Incredible! You match 100% of the core skills for this position.
             </p>
           )}
